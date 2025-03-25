@@ -44,4 +44,11 @@ class GlobalFunctions {
         return Colors.blue;
     }
   }
+
+  void nextScreenReplace(BuildContext context, Widget screen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
+    );
+  }
 }

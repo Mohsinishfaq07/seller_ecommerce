@@ -1,4 +1,7 @@
-enum UserType { admin, customer, seller }
+enum UserType {
+  customer,
+  seller, admin,
+}
 
 enum ToastType {
   success,

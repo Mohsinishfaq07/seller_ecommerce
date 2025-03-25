@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/app_colors.dart';
+import 'package:flutter_application_1/constants/constants.dart' as constants;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'SellerScreen/seller_edit.dart'; // Edit Page
 import 'SellerScreen/seller_messages.dart'; // Messages Page
 import 'SellerScreen/seller_profile.dart'; // Profile Page
 
-class SellerHomePage extends StatefulWidget {
+class SellerHomePage extends ConsumerStatefulWidget {
   const SellerHomePage({Key? key}) : super(key: key);
 
   @override
-  State<SellerHomePage> createState() => _SellerHomePageState();
+  ConsumerState<SellerHomePage> createState() => _SellerHomePageState();
 }
 
-class _SellerHomePageState extends State<SellerHomePage> {
+class _SellerHomePageState extends ConsumerState<SellerHomePage> {
   int _selectedIndex = 0; // Current selected tab index
   final List<Widget> _pages = [
     const SellerHomeContent(),
@@ -24,6 +27,40 @@ class _SellerHomePageState extends State<SellerHomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> _handleLogout() async {
+    try {
+      // Show confirmation dialog
+      final shouldLogout = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: AppColors.error),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldLogout ?? false) {
+        await constants.authServices.signOut(context: context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to logout. Please try again.')),
+      );
+    }
   }
 
   @override
@@ -41,8 +78,8 @@ class _SellerHomePageState extends State<SellerHomePage> {
                 icon: Icon(Icons.message), label: 'Messages'),
             BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Edit'),
           ],
-          selectedItemColor: Colors.green,
-          unselectedItemColor: Colors.grey,
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: AppColors.textSecondary,
           showUnselectedLabels: true,
         ),
       ),
@@ -64,15 +101,27 @@ class SellerHomeContent extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'Seller Center',
-          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          style:
+              TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: AppColors.black),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              // Get the root navigator context
+              final rootContext = Navigator.of(context).context;
+              await (rootContext
+                      .findAncestorStateOfType<_SellerHomePageState>()
+                      ?._handleLogout() ??
+                  Future.value());
+            },
           ),
         ],
       ),

@@ -1,14 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
-import 'package:flutter_application_1/models/general_models/user_model.dart';
-import 'package:flutter_application_1/view/customer/buyer_home/customer_home.dart';
+import 'package:flutter_application_1/seller_home.dart';
+import 'package:flutter_application_1/view/buyer_home/customer_home.dart';
 import 'package:flutter_application_1/welcome_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_application_1/models/seller_model.dart';
+import 'package:flutter_application_1/models/customer_model.dart';
 
 class AuthServices {
-  createAccount({
+  Future<void> createAccount({
     required String email,
     required String password,
     required String confirmPassword,
@@ -17,10 +20,17 @@ class AuthServices {
     required BuildContext context,
     required UserType userType,
     required WidgetRef ref,
+    String? shopName,
+    String? shopType,
   }) async {
     if (email.isEmpty || password.isEmpty || name.isEmpty || number.isEmpty) {
       globalFunctions.showToast(
           message: 'Please enter all details', toastType: ToastType.error);
+      return;
+    } else if (userType == UserType.seller &&
+        (shopName?.isEmpty ?? true || shopType!.isEmpty ?? true)) {
+      globalFunctions.showToast(
+          message: 'Please enter shop details', toastType: ToastType.error);
       return;
     } else if (!email.contains('@')) {
       globalFunctions.showToast(
@@ -50,101 +60,147 @@ class AuthServices {
           password: password,
         );
         debugPrint('account created');
-        bool dataStored = await firestoreService.storeUserData(
-          user: UserDetail(
-            name: name,
-            email: email,
-            password: password,
-            userId: credential.user!.uid,
-            userType: userType,
-            number: number,
-          ),
-        );
+
+        bool dataStored;
+        if (userType == UserType.seller) {
+          dataStored = await firestoreService.storeUserData(
+            user: SellerModel(
+              userId: credential.user!.uid,
+              name: name,
+              email: email,
+              password: password,
+              number: number,
+              shopName: shopName!,
+              shopType: shopType!,
+            ),
+          );
+        } else {
+          dataStored = await firestoreService.storeUserData(
+            user: CustomerModel(
+              userId: credential.user!.uid,
+              name: name,
+              email: email,
+              password: password,
+              number: number,
+            ),
+          );
+        }
+
         if (dataStored) {
           globalFunctions.showToast(
-              message: 'Account created successfully',
-              toastType: ToastType.info);
-          globalFunctions.showToast(
-              message: 'Account created successfully',
-              toastType: ToastType.info);
-          if (userType == UserType.customer) {
+            message: 'Account created successfully',
+            toastType: ToastType.success,
+          );
+
+          // Navigate based on user type
+          if (userType == UserType.seller) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SellerHomePage()),
+            );
+          } else if (userType == UserType.customer) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const CustomerHomePage()),
             );
-          } else if (userType == UserType.seller) {
-          } else if (userType == UserType.admin) {}
-          await credential.user!.delete();
-
-          globalFunctions.showToast(
-              message: 'Failed to create account\n try again in 5 minutes',
-              toastType: ToastType.error);
+          }
+        } else {
+          throw Exception('Failed to store user data');
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           globalFunctions.showToast(
-              message: 'The password provided is too weak.',
-              toastType: ToastType.error);
-          debugPrint('The password provided is too weak.');
+            message: 'The password provided is too weak.',
+            toastType: ToastType.error,
+          );
         } else if (e.code == 'email-already-in-use') {
           globalFunctions.showToast(
-              message: 'The account already exists for that email.',
-              toastType: ToastType.error);
-          debugPrint('The account already exists for that email.');
+            message: 'The account already exists for that email.',
+            toastType: ToastType.error,
+          );
         }
+        rethrow; // Rethrow to handle in UI
       } catch (e) {
-        debugPrint(e.toString());
+        globalFunctions.showToast(
+          message: 'Error creating account: ${e.toString()}',
+          toastType: ToastType.error,
+        );
+        rethrow; // Rethrow to handle in UI
       }
     }
   }
 
-  login(
-      {required String email,
-      required String password,
-      required BuildContext context,
-      required WidgetRef widgetRef}) async {
+  login({
+    required String email,
+    required String password,
+    required BuildContext context,
+    required WidgetRef widgetRef,
+  }) async {
     if (email.isEmpty || password.isEmpty) {
       globalFunctions.showToast(
-          message: 'Please enter email and password',
-          toastType: ToastType.error);
+        message: 'Please enter email and password',
+        toastType: ToastType.error,
+      );
       return;
-    } else if (!email.contains('@')) {
-      globalFunctions.showToast(
-          message: 'Please enter valid email', toastType: ToastType.error);
-      return;
-    } else if (password.length < 6) {
-      globalFunctions.showToast(
-          message: 'Password should be minimum 6 characters',
-          toastType: ToastType.error);
-      return;
-    } else {
-      try {
-        final userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
+    }
+
+    try {
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Get user data from Firestore
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (userData.exists) {
+        final userType = UserType.values.firstWhere(
+          (e) => e.toString() == userData['userType'],
+          orElse: () => UserType.customer,
         );
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CustomerHomePage()),
-        );
-        return userCredential;
-      } on FirebaseAuthException catch (e) {
-        globalFunctions.showToast(
-            message: 'Credentials are incorrect', toastType: ToastType.error);
-        if (e.code == 'user-not-found') {
-          globalFunctions.showToast(
-              message: 'user not found', toastType: ToastType.error);
-          debugPrint('The user does not exist.');
-        } else if (e.code == 'wrong-password') {
-          globalFunctions.showToast(
-              message: 'Credentials are incorrect', toastType: ToastType.error);
-          debugPrint('The password is invalid for that user.');
+        // Navigate based on user type
+        if (userType == UserType.seller) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SellerHomePage()),
+          );
+        } else if (userType == UserType.customer) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const CustomerHomePage()),
+          );
         }
-      } catch (e) {
-        debugPrint(e.toString());
+
+        globalFunctions.showToast(
+          message: 'Login successful',
+          toastType: ToastType.success,
+        );
+      } else {
+        throw Exception('User data not found');
       }
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'An error occurred';
+      if (e.code == 'user-not-found') {
+        errorMessage = 'No user found with this email';
+      } else if (e.code == 'wrong-password') {
+        errorMessage = 'Wrong password';
+      }
+      globalFunctions.showToast(
+        message: errorMessage,
+        toastType: ToastType.error,
+      );
+    } catch (e) {
+      globalFunctions.showToast(
+        message: 'Error: ${e.toString()}',
+        toastType: ToastType.error,
+      );
     }
   }
 
@@ -160,28 +216,52 @@ class AuthServices {
     }
   }
 
-  forgotPassword({
-    required String email,
-  }) async {
-    if (email.isEmpty) {
-      globalFunctions.showToast(
-          message: 'Please enter email', toastType: ToastType.error);
-      return;
-    } else if (!email.contains('@')) {
-      globalFunctions.showToast(
-          message: 'Please enter valid email', toastType: ToastType.error);
-      return;
-    } else {
-      try {
-        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-        globalFunctions.showToast(
-            message: 'Password reset link has been sent to your email',
-            toastType: ToastType.success);
-      } catch (e) {
-        globalFunctions.showToast(
-            message: 'Something went wrong', toastType: ToastType.error);
-        debugPrint(e.toString());
+  Future<void> forgotPassword({required String email}) async {
+    try {
+      // Validate email format
+      if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
+        throw FirebaseAuthException(
+          code: 'invalid-email',
+          message: 'The email address is badly formatted.',
+        );
       }
+
+      // Send password reset email
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email.trim(),
+      );
+
+      globalFunctions.showToast(
+        message: 'Password reset link has been sent to your email',
+        toastType: ToastType.success,
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No user found with this email';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Please enter a valid email address';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Too many requests. Please try again later';
+          break;
+        default:
+          errorMessage = 'Failed to send reset email: ${e.message}';
+      }
+      globalFunctions.showToast(
+        message: errorMessage,
+        toastType: ToastType.error,
+      );
+      throw Exception(errorMessage);
+    } catch (e) {
+      const errorMessage = 'An unexpected error occurred';
+      globalFunctions.showToast(
+        message: errorMessage,
+        toastType: ToastType.error,
+      );
+      throw Exception(errorMessage);
     }
   }
 }

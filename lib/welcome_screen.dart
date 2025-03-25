@@ -1,126 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/constants/constants.dart';
-import 'package:flutter_application_1/signup_admin.dart';
-import 'package:flutter_application_1/view/customer/auth/signup_page.dart';
-import 'package:flutter_application_1/signup_seller.dart';
+import 'package:flutter_application_1/constants/app_colors.dart';
+import 'package:flutter_application_1/constants/app_styles.dart';
+import 'package:flutter_application_1/constants/constants.dart' as constants;
+import 'package:flutter_application_1/providers/splash_screen_provider.dart';
+import 'package:flutter_application_1/utils/screen_utils.dart';
+import 'package:flutter_application_1/view/auth/signup_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WelcomeHomeScreen extends StatelessWidget {
+class WelcomeHomeScreen extends ConsumerWidget {
   const WelcomeHomeScreen({Key? key}) : super(key: key);
 
+  void _navigateToSignUp(BuildContext context) {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (context.mounted) {
+        constants.globalFunctions.nextScreenReplace(
+          context,
+          const CustomerSignUpPage(),
+        );
+      }
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ScreenUtils().init(context);
+
+    // Initialize navigation
+    _navigateToSignUp(context);
+
+    // Initialize animation controller
+    ref.watch(splashControllerProvider);
+
+    // Get current opacity value
+    final opacity = ref.watch(splashOpacityProvider);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flea Market'),
-        centerTitle: true,
-        backgroundColor: Colors.teal,
-      ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.teal, Colors.lightGreenAccent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Add an image above the text
-              const Image(
-                image: AssetImage('assets/logo.jpg'),
-                height: 80,
-                width: 80,
-              ),
-              const SizedBox(height: 20),
-
-              // Welcome Text
-              const Text(
-                'Welcome to Flea Market!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-
-              // Customer Button
-              ElevatedButton(
-                onPressed: () {
-                  globalFunctions.nextScreen(
-                      context, const CustomerSignUpPage());
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+        height: ScreenUtils.screenHeight,
+        decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+        child: SafeArea(
+          child: AnimatedOpacity(
+            duration: const Duration(seconds: 1),
+            opacity: opacity,
+            child: Column(
+              children: [
+                SizedBox(height: ScreenUtils.getProportionateScreenHeight(40)),
+                // Logo section
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.store_rounded,
+                        size: ScreenUtils.getProportionateScreenWidth(100),
+                        color: AppColors.white,
+                      ),
+                      SizedBox(
+                        height: ScreenUtils.getProportionateScreenHeight(20),
+                      ),
+                      const Text(
+                        'Market Flea',
+                        style: AppStyles.headingStyle,
+                      ),
+                    ],
                   ),
                 ),
-                child: const Text(
-                  'Customer',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                // Loading indicator
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.white),
+                      strokeWidth: 3,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              // Seller Button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignupSeller()));
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Seller',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Admin Button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SignupAdmin()));
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Admin',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
