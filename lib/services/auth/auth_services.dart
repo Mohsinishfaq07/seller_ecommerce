@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/admin_home.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/seller_home.dart';
+import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/buyer_home/customer_home.dart';
 import 'package:flutter_application_1/welcome_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,6 +74,7 @@ class AuthServices {
               number: number,
               shopName: shopName!,
               shopType: shopType!,
+              approved: false,
             ),
           );
         } else {
@@ -94,10 +97,13 @@ class AuthServices {
 
           // Navigate based on user type
           if (userType == UserType.seller) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SellerHomePage()),
-            );
+            globalFunctions.showToast(
+                message: 'Seller account created successfully',
+                toastType: ToastType.success);
+            globalFunctions.showToast(
+                message: 'Account is under approval',
+                toastType: ToastType.info);
+            authServices.signOut(context: context);
           } else if (userType == UserType.customer) {
             Navigator.pushReplacement(
               context,
@@ -164,22 +170,35 @@ class AuthServices {
         );
 
         // Navigate based on user type
-        if (userType == UserType.seller) {
+        if (userType == UserType.seller && userData['approved']) {
+          globalFunctions.showToast(
+            message: 'Login successful',
+            toastType: ToastType.success,
+          );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const SellerHomePage()),
           );
+        } else if (userType == UserType.seller && !userData['approved']) {
+          globalFunctions.showToast(
+              message: 'Account not approved', toastType: ToastType.error);
+          authServices.signOut(context: context);
+        } else if (userData.exists && userType == UserType.admin) {
+          globalFunctions.showToast(
+            message: 'Admin Login successful',
+            toastType: ToastType.success,
+          );
+          globalFunctions.nextScreen(context, const AdminHomePage());
         } else if (userType == UserType.customer) {
+          globalFunctions.showToast(
+            message: 'Login successful',
+            toastType: ToastType.success,
+          );
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const CustomerHomePage()),
           );
         }
-
-        globalFunctions.showToast(
-          message: 'Login successful',
-          toastType: ToastType.success,
-        );
       } else {
         throw Exception('User data not found');
       }
@@ -204,12 +223,12 @@ class AuthServices {
     }
   }
 
-  signOut({
+  Future<void> signOut({
     required BuildContext context,
   }) async {
     try {
       await FirebaseAuth.instance.signOut().then((val) {
-        globalFunctions.nextScreen(context, const WelcomeHomeScreen());
+        // globalFunctions.nextScreen(context, const WelcomeHomeScreen());
       });
     } catch (e) {
       debugPrint(e.toString());

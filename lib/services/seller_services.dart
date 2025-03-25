@@ -5,8 +5,6 @@ import 'package:flutter_application_1/models/seller_model.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/seller_home.dart';
 
-
-
 class SellerServices {
   Future<void> createSellerAccount({
     required String email,
@@ -34,6 +32,7 @@ class SellerServices {
         number: number,
         shopName: shopName,
         shopType: shopType,
+        approved: false,
       );
 
       if (!seller.isValidSeller()) {

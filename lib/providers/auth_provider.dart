@@ -7,7 +7,6 @@ import '../enums/global_enums.dart';
 final authProvider =
     ChangeNotifierProvider<AuthProvider>((ref) => AuthProvider());
 
-// Define a separate provider for userType
 final userTypeProvider = StateProvider<UserType>((ref) => UserType.customer);
 
 class AuthProvider extends ChangeNotifier {

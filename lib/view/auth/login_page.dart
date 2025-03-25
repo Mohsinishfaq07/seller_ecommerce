@@ -252,7 +252,10 @@ class CustomerLoginScreen extends StatelessWidget {
   void _handleLogin(BuildContext context, WidgetRef ref, dynamic auth) async {
     final emailController = auth.emailController;
     final passwordController = auth.passwordController;
-
+    constants.globalFunctions
+        .showLog(message: 'email: ${emailController.text}');
+    constants.globalFunctions
+        .showLog(message: 'password: ${passwordController.text}');
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),

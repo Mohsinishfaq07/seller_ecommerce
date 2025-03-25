@@ -9,6 +9,7 @@ class SellerModel {
   final String shopName;
   final String shopType;
   final UserType userType;
+  final bool approved;
 
   SellerModel({
     required this.userId,
@@ -18,6 +19,7 @@ class SellerModel {
     required this.number,
     required this.shopName,
     required this.shopType,
+    required this.approved,
   }) : userType = UserType.seller;
 
   Map<String, dynamic> toMap() {
@@ -30,6 +32,7 @@ class SellerModel {
       'userType': userType.toString(),
       'shopName': shopName,
       'shopType': shopType,
+      'approved': false,
     };
   }
 
@@ -42,6 +45,7 @@ class SellerModel {
       number: map['number'] ?? '',
       shopName: map['shopName'] ?? '',
       shopType: map['shopType'] ?? '',
+      approved: map['approved'] ?? false,
     );
   }
 
