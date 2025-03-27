@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/app_colors.dart';
+import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
+import 'package:flutter_application_1/utils/screen_utils.dart';
+import 'package:flutter_application_1/widgets/custom_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UploadCategory extends ConsumerWidget {
@@ -10,92 +13,148 @@ class UploadCategory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Upload Category"),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 20,
-        children: [
-          Consumer(
-            builder: (_, WidgetRef ref, __) {
-              return Center(
-                child: TextFormField(
-                  onChanged: (val) {
-                    ref
-                        .read(uploadCategoryProvider
-                            .categoryNameController.notifier)
-                        .state = TextEditingController(text: val);
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Category Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF00897B)),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              );
-            },
+    ScreenUtils().init(context);
+
+    return Container(
+      decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: AppColors.primary,
+          title: const Text(
+            "Upload Category",
+            style: TextStyle(color: AppColors.white),
           ),
-          Consumer(
-            builder: (_, WidgetRef ref, __) {
-              final categoryNameController =
-                  ref.watch(uploadCategoryProvider.categoryNameController);
-              return ElevatedButton(
-                onPressed: () {
-                  if (categoryNameController.text.isEmpty) {
-                    globalFunctions.showToast(
-                        message: 'Please enter category name',
-                        toastType: ToastType.error);
-                    return;
-                  }
-                  uploadCategory(
-                    categoryName: categoryNameController.text,
-                  );
-                },
-                child: const Text('upload category'),
-              );
-            },
-          )
-        ],
+          iconTheme: const IconThemeData(color: AppColors.white),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Welcome Section
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: AppStyles.formContainerDecoration,
+                child: Column(
+                  children: [
+                    const Icon(
+                      Icons.category_rounded,
+                      size: 50,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Add New Category',
+                      style: AppStyles.headingStyle.copyWith(
+                        color: AppColors.primary,
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Create a new category for products',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Form Section
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: AppStyles.formContainerDecoration,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Consumer(
+                      builder: (_, WidgetRef ref, __) {
+                        final controller = ref.watch(
+                            uploadCategoryProvider.categoryNameController);
+                        return CustomTextField(
+                          controller: controller,
+                          label: 'Category Name',
+                          prefixIcon: Icons.label_outline,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Consumer(
+                      builder: (_, WidgetRef ref, __) {
+                        final categoryNameController = ref.watch(
+                            uploadCategoryProvider.categoryNameController);
+                        return ElevatedButton.icon(
+                          onPressed: () async {
+                            if (categoryNameController.text.isEmpty) {
+                              globalFunctions.showToast(
+                                message: 'Please enter category name',
+                                toastType: ToastType.error,
+                              );
+                              return;
+                            }
+                            await uploadCategory(
+                              categoryName: categoryNameController.text,
+                            );
+                            // Clear the field after successful upload
+                            categoryNameController.clear();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: AppColors.white,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 20,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(Icons.upload),
+                          label: const Text(
+                            'Upload Category',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  uploadCategory({
-    required String categoryName,
-  }) async {
+  Future<void> uploadCategory({required String categoryName}) async {
     try {
       await FirebaseFirestore.instance
           .collection('categories')
           .doc('categories')
           .set(
         {
-          'categoryName': FieldValue.arrayUnion(
-            [categoryName],
-          ),
+          'categoryName': FieldValue.arrayUnion([categoryName]),
         },
-        SetOptions(
-          merge: true,
-        ),
+        SetOptions(merge: true),
       );
       globalFunctions.showToast(
-          message: 'Category uploaded successfully',
-          toastType: ToastType.success);
+        message: 'Category uploaded successfully',
+        toastType: ToastType.success,
+      );
     } catch (e) {
+      globalFunctions.showToast(
+        message: 'Failed to upload category: ${e.toString()}',
+        toastType: ToastType.error,
+      );
       globalFunctions.showLog(message: 'error: ${e.toString()}');
     }
   }

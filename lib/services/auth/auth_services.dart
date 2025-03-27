@@ -158,7 +158,8 @@ class AuthServices {
       );
 
       // Get user data from Firestore
-      final userData = await FirebaseFirestore.instance
+      final userData = await
+      FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
           .get();
