@@ -10,8 +10,4 @@ enum ToastType {
   info,
 }
 
-enum OrderStatus {
-  active,
-  processing,
-  dispatched,
-}
+enum OrderStatus { active, pending, processing, shipped, delivered, cancelled, dispatched }

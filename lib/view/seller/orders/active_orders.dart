@@ -82,7 +82,7 @@ class ActiveOrders extends StatelessWidget {
                                   orderId: order['orderId'] ?? '',
                                   status: OrderStatus.dispatched.name);
                             },
-                            child: Text('Update to Dispatched'))
+                            child: const Text('Update to Dispatched'))
                       ],
                     ),
                   ));
