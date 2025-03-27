@@ -7,6 +7,7 @@ import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/seller_home.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/buyer_home/customer_home.dart';
+import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 import 'package:flutter_application_1/welcome_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/models/seller_model.dart';
@@ -177,7 +178,7 @@ class AuthServices {
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const SellerHomePage()),
+            MaterialPageRoute(builder: (context) => const SellerNewHomePage()),
           );
         } else if (userType == UserType.seller && !userData['approved']) {
           globalFunctions.showToast(
