@@ -5,13 +5,13 @@ import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/cart_model.dart';
 
-class CompletedOrders extends StatelessWidget {
-  const CompletedOrders({super.key});
+class CustomerOrdersPage extends StatelessWidget {
+  const CustomerOrdersPage({super.key});
 
-  Stream<List<Map<String, dynamic>>> fetchCompletedOrders() {
+  Stream<List<Map<String, dynamic>>> fetchCustomerOrders() {
     return FirebaseFirestore.instance
         .collection('orders')
-        .where('orderStatus', isEqualTo: OrderStatus.dispatched.name)
+        .where('customerId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
   }
@@ -19,9 +19,9 @@ class CompletedOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Completed Orders')),
+      appBar: AppBar(title: const Text('My Orders')),
       body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: fetchCompletedOrders(),
+        stream: fetchCustomerOrders(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -32,22 +32,11 @@ class CompletedOrders extends StatelessWidget {
           }
 
           final orders = snapshot.data ?? [];
-          final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
-          final filteredOrders = orders
-              .where(
-                (order) => order['sellerId'] == currentUserId,
-              )
-              .toList();
-
-          if (filteredOrders.isEmpty) {
-            return const Center(child: Text('No completed orders.'));
-          }
 
           return ListView.builder(
-            itemCount: filteredOrders.length,
+            itemCount: orders.length,
             itemBuilder: (context, index) {
-              final order = filteredOrders[index];
+              final order = orders[index];
               CardModel orderDetails = CardModel(
                 productName: order['productName'] ?? '',
                 productPrice: order['productPrice'] ?? '',
@@ -60,18 +49,18 @@ class CompletedOrders extends StatelessWidget {
                 orderStatus: order['orderStatus'] ?? '',
               );
               return Card(
-                  margin: const EdgeInsets.all(10),
-                  child: Container(
-                    child: Column(
-                      children: [
-                        Text('Product Name: ${orderDetails.productName}'),
-                        Text('Product Price: ${orderDetails.productPrice}'),
-                        Text('Quantity: ${orderDetails.quantity}'),
-                        Text('Order ID: ${orderDetails.orderId}'),
-                        Text('Status: ${orderDetails.orderStatus}'),
-                      ],
-                    ),
-                  ));
+                margin: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Product Name: ${orderDetails.productName}'),
+                    Text('Product Price: ${orderDetails.productPrice}'),
+                    Text('Quantity: ${orderDetails.quantity}'),
+                    Text('Order ID: ${orderDetails.orderId}'),
+                    Text('Status: ${orderDetails.orderStatus}'),
+                  ],
+                ),
+              );
             },
           );
         },

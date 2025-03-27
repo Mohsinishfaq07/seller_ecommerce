@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
+import 'package:flutter_application_1/models/cart_model.dart';
 
 class ProcessingOrders extends StatelessWidget {
   const ProcessingOrders({super.key});
@@ -47,12 +48,27 @@ class ProcessingOrders extends StatelessWidget {
             itemCount: filteredOrders.length,
             itemBuilder: (context, index) {
               final order = filteredOrders[index];
+              CardModel orderDetails = CardModel(
+                productName: order['productName'] ?? '',
+                productPrice: order['productPrice'] ?? '',
+                productId: order['productId'] ?? '',
+                quantity: order['quantity'] ?? '',
+                customerId: order['customerId'] ?? '',
+                orderId: order['orderId'] ?? '',
+                sellerId: order['sellerId'] ?? '',
+                productImage: order['productImage'] ?? '',
+                orderStatus: order['orderStatus'] ?? '',
+              );
               return Card(
                   margin: const EdgeInsets.all(10),
                   child: Container(
                     child: Column(
                       children: [
-                        Text('Order ID: ${order['orderId'] ?? 'N/A'}'),
+                        Text('Product Name: ${orderDetails.productName}'),
+                        Text('Product Price: ${orderDetails.productPrice}'),
+                        Text('Quantity: ${orderDetails.quantity}'),
+                        Text('Order ID: ${orderDetails.orderId}'),
+                        Text('Status: ${orderDetails.orderStatus}'),
                         ElevatedButton(
                             onPressed: () {
                               firestoreService.updateOrderStatus(
