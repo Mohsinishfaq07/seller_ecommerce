@@ -3,8 +3,11 @@ import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
+import 'package:flutter_application_1/view/admin/categories/all_categories.dart';
 import 'package:flutter_application_1/view/admin/categories/upload_category.dart';
 import 'package:flutter_application_1/view/admin/customers/customers.dart';
+import 'package:flutter_application_1/view/admin/orders/orders_page.dart';
+import 'package:flutter_application_1/view/admin/products/uploaded_products.dart';
 import 'package:flutter_application_1/view/admin/sellers/approved_sellers.dart';
 import 'package:flutter_application_1/view/admin/sellers/non_approved_sellers.dart';
 import 'package:flutter_application_1/welcome_screen.dart';
@@ -116,12 +119,24 @@ class AdminHomePage extends StatelessWidget {
                   _buildAdminButton(
                     title: "All Categories",
                     icon: Icons.list,
-                    onPressed: () {},
+                    onPressed: () {
+                      globalFunctions.nextScreen(
+                          context, UploadedCategoryScreen());
+                    },
                   ),
                   _buildAdminButton(
                     title: "All Products",
                     icon: Icons.inventory,
-                    onPressed: () {},
+                    onPressed: () {
+                      globalFunctions.nextScreen(context, AllProductsScreen());
+                    },
+                  ),
+                  _buildAdminButton(
+                    title: "All Orders",
+                    icon: Icons.card_travel,
+                    onPressed: () {
+                      globalFunctions.nextScreen(context, AdminOrdersPage());
+                    },
                   ),
                 ],
               ),

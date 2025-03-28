@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/view/chat_page/chat_page.dart';
 import 'package:flutter_application_1/view/seller/orders/active_orders.dart';
 import 'package:flutter_application_1/view/seller/orders/dispatched_orders.dart';
 import 'package:flutter_application_1/view/seller/orders/processing_products.dart';
@@ -53,7 +54,9 @@ class SellerNewHomePage extends StatelessWidget {
             child: Text('dispatched / completed orders'),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              globalFunctions.nextScreen(context, ChatPage());
+            },
             child: Text('chats'),
           )
         ],

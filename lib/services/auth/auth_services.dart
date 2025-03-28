@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
+import 'package:flutter_application_1/models/user_model.dart';
 import 'package:flutter_application_1/seller_home.dart';
+import 'package:flutter_application_1/services/firestore/firestore_services.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
@@ -158,8 +160,7 @@ class AuthServices {
       );
 
       // Get user data from Firestore
-      final userData = await
-      FirebaseFirestore.instance
+      final userData = await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
           .get();
@@ -283,5 +284,20 @@ class AuthServices {
       );
       throw Exception(errorMessage);
     }
+  }
+
+  Future<UserDetail> getUserDetails({required String userId}) async {
+    late UserDetail userDetails;
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      userDetails =
+          UserDetail.fromJson(snapshot.data() as Map<String, dynamic>);
+    } catch (e) {
+      globalFunctions.showLog(message: "Error getting user details: $e");
+    }
+    return userDetails;
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/functions/global_functions.dart';
 import 'package:flutter_application_1/models/product_sell_model.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
+import 'package:flutter_application_1/view/chat_page/chat_page.dart';
 import 'package:flutter_application_1/view/customer/cart/cart_page.dart';
 import 'package:flutter_application_1/view/customer/orders/orders_page.dart';
 import 'package:flutter_application_1/view/customer/product_page/product_page.dart';
@@ -195,17 +196,26 @@ class CustomerHomePage extends ConsumerWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.primary,
-          title: Row(
-            children: [
-              const Icon(Icons.store, color: AppColors.white),
-              const SizedBox(width: 8),
-              const Text(
-                "Market Flea",
-                style: TextStyle(color: AppColors.white),
-              ),
-            ],
-          ),
+          // title: Row(
+          //   children: [
+          //     const Icon(Icons.store, color: AppColors.white),
+          //     const SizedBox(width: 8),
+          //     const Text(
+          //       "Market Flea",
+          //       style: TextStyle(color: AppColors.white),
+          //     ),
+          //   ],
+          // ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.message, color: AppColors.white),
+              onPressed: () {
+                constants.globalFunctions.nextScreen(
+                  context,
+                  ChatPage(),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.favorite_border, color: AppColors.white),
               onPressed: () {},

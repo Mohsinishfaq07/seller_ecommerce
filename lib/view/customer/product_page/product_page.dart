@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/app_styles.dart';
+import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/cart_model.dart';
 import 'package:flutter_application_1/models/product_sell_model.dart';
@@ -177,7 +178,13 @@ class ProductDetailsScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    chatService.sendFirstMessage(
+                      message: 'Hello Sir',
+                      sellerId: product.uploadedBy,
+                      buyerId: FirebaseAuth.instance.currentUser!.uid,
+                    );
+                  },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primary,
                     side: const BorderSide(color: AppColors.primary),
@@ -201,7 +208,7 @@ class ProductDetailsScreen extends StatelessWidget {
                       orderId: generateRandom10DigitNumber(),
                       sellerId: product.uploadedBy,
                       productImage: product.images[0],
-                      orderStatus: OrderStatus.pending.name,
+                      orderStatus: OrderStatus.active.name,
                     );
                     Navigator.pop(context);
                     CartService.addProduct(product: cardModel);
