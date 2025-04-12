@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/splash_screen.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
 import 'package:flutter_application_1/view/admin/categories/all_categories.dart';
 import 'package:flutter_application_1/view/admin/categories/upload_category.dart';
@@ -10,14 +11,8 @@ import 'package:flutter_application_1/view/admin/orders/orders_page.dart';
 import 'package:flutter_application_1/view/admin/products/uploaded_products.dart';
 import 'package:flutter_application_1/view/admin/sellers/approved_sellers.dart';
 import 'package:flutter_application_1/view/admin/sellers/non_approved_sellers.dart';
-import 'package:flutter_application_1/welcome_screen.dart';
 
-// List<Map<String, dynamic>> data = [
-//   {
-//     "name": 'Approved/nSellers',
-//     "function": globalFunctions.nextScreen(context, ApprovedSellersPage()),
-//   }
-// ];
+
 
 class AdminHomePage extends StatelessWidget {
   const AdminHomePage({super.key});

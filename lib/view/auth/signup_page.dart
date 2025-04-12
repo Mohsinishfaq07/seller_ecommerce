@@ -1,13 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/widgets/custom_text_field.dart';
 import 'package:flutter_application_1/constants/app_styles.dart';
-import 'package:flutter_application_1/constants/app_colors.dart';
 
 enum ShopType {
   online,
@@ -384,7 +383,7 @@ class CustomerSignUpPage extends StatelessWidget {
                                                 Colors.white),
                                       ),
                                     )
-                                  : Text(
+                                  : const Text(
                                       'Sign Up',
                                       style: AppStyles.buttonTextStyle,
                                     ),

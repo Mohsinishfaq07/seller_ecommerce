@@ -75,7 +75,7 @@ class ActiveOrders extends StatelessWidget {
                                   orderId: order['orderId'] ?? '',
                                   status: OrderStatus.processing.name);
                             },
-                            child: Text('Update to Processin')),
+                            child: const Text('Update to Processin')),
                         ElevatedButton(
                             onPressed: () {
                               firestoreService.updateOrderStatus(

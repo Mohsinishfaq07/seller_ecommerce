@@ -11,7 +11,7 @@ class WelcomeHomeScreen extends ConsumerWidget {
   const WelcomeHomeScreen({Key? key}) : super(key: key);
 
   void _navigateToSignUp(BuildContext context) {
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 6), () {
       if (context.mounted) {
         constants.globalFunctions.nextScreenReplace(
           context,

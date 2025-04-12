@@ -1,17 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_application_1/constants/app_colors.dart';
-import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
-import 'package:flutter_application_1/functions/global_functions.dart';
 import 'package:flutter_application_1/models/product_sell_model.dart';
-import 'package:flutter_application_1/utils/screen_utils.dart';
 import 'package:flutter_application_1/view/chat_page/chat_page.dart';
 import 'package:flutter_application_1/view/customer/cart/cart_page.dart';
-import 'package:flutter_application_1/view/customer/orders/orders_page.dart';
 import 'package:flutter_application_1/view/customer/product_page/product_page.dart';
-import 'package:flutter_application_1/welcome_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CustomerHomePage extends ConsumerWidget {
