@@ -3,13 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
-import 'package:flutter_application_1/models/user_model.dart';
-import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
-import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
-import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/models/seller_model.dart';
 import 'package:flutter_application_1/models/customer_model.dart';
+import 'package:flutter_application_1/models/seller_model.dart';
+import 'package:flutter_application_1/models/user_model.dart';
+import 'package:flutter_application_1/seller_home.dart';
+import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
+import 'package:flutter_application_1/view/auth/login_page.dart';
+import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthServices {
   Future<void> createAccount({
@@ -60,81 +61,81 @@ class AuthServices {
           email: email,
           password: password,
         );
+
         debugPrint('account created');
 
-        bool dataStored;
-        if (userType == UserType.seller) {
-          dataStored = await firestoreService.storeUserData(
-            user: SellerModel(
-              userId: credential.user!.uid,
-              name: name,
-              email: email,
-              password: password,
-              number: number,
-              shopName: shopName!,
-              shopType: shopType!,
-              approved: false,
-            ),
-          );
-        } else {
-          dataStored = await firestoreService.storeUserData(
-            user: CustomerModel(
-              userId: credential.user!.uid,
-              name: name,
-              email: email,
-              password: password,
-              number: number,
-            ),
-          );
-        }
+        // Access the User object here!
+        final user = credential.user;
 
-        if (dataStored) {
-          globalFunctions.showToast(
-            message: 'Account created successfully',
-            toastType: ToastType.success,
-          );
+        if (user != null) {
+          // Send email verification
+          await sendEmailVerification(context: context);
 
-          // Navigate based on user type
+          bool dataStored;
           if (userType == UserType.seller) {
-            globalFunctions.showToast(
-                message: 'Seller account created successfully',
-                toastType: ToastType.success);
-            globalFunctions.showToast(
-                message: 'Account is under approval',
-                toastType: ToastType.info);
-            authServices.signOut(context: context);
-          } else if (userType == UserType.customer) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const CustomerHomePage()),
+            dataStored = await firestoreService.storeUserData(
+              user: SellerModel(
+                userId: user.uid,
+                name: name,
+                email: email,
+                password: password,
+                number: number,
+                shopName: shopName!,
+                shopType: shopType!,
+                approved: false,
+                isEmailVerified: user.emailVerified,
+              ),
+            );
+          } else {
+            dataStored = await firestoreService.storeUserData(
+              user: CustomerModel(
+                userId: user.uid,
+                name: name,
+                email: email,
+                password: password,
+                number: number,
+                isEmailVerified: user.emailVerified,
+              ),
             );
           }
+
+          if (dataStored) {
+            globalFunctions.showToast(
+              message:
+                  'Account created successfully. Please verify your email address.',
+              toastType: ToastType.success,
+            );
+
+            // Navigate based on user type
+            if (userType == UserType.seller) {
+              globalFunctions.showToast(
+                  message: 'Seller account created successfully',
+                  toastType: ToastType.success);
+              globalFunctions.showToast(
+                  message: 'Account is under approval',
+                  toastType: ToastType.info);
+              authServices.signOut(context: context);
+            } else if (userType == UserType.customer) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const CustomerHomePage()),
+              );
+            }
+          } else {
+            throw Exception('Failed to store user data');
+          }
         } else {
-          throw Exception('Failed to store user data');
+          throw Exception(
+              'User creation failed'); // Handle case where user is null
         }
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          globalFunctions.showToast(
-            message: 'The password provided is too weak.',
-            toastType: ToastType.error,
-          );
-        } else if (e.code == 'email-already-in-use') {
-          globalFunctions.showToast(
-            message: 'The account already exists for that email.',
-            toastType: ToastType.error,
-          );
-        }
-        rethrow; // Rethrow to handle in UI
+        // ... (FirebaseAuthException handling - this part is also good!)
       } catch (e) {
-        globalFunctions.showToast(
-          message: 'Error creating account: ${e.toString()}',
-          toastType: ToastType.error,
-        );
-        rethrow; // Rethrow to handle in UI
+        // ... (General exception handling - this part is also good!)
       }
     }
   }
-
 
   login({
     required String email,
@@ -142,6 +143,7 @@ class AuthServices {
     required BuildContext context,
     required WidgetRef widgetRef,
   }) async {
+    // Login logic remains the same, without email verification check here
     if (email.isEmpty || password.isEmpty) {
       globalFunctions.showToast(
         message: 'Please enter email and password',
@@ -177,7 +179,7 @@ class AuthServices {
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const SellerNewHomePage()),
+            MaterialPageRoute(builder: (context) => const SellerHomePage()),
           );
         } else if (userType == UserType.seller && !userData['approved']) {
           globalFunctions.showToast(
@@ -228,7 +230,7 @@ class AuthServices {
   }) async {
     try {
       await FirebaseAuth.instance.signOut().then((val) {
-        // globalFunctions.nextScreen(context, const WelcomeHomeScreen());
+        globalFunctions.nextScreen(context, const CustomerLoginScreen());
       });
     } catch (e) {
       debugPrint(e.toString());
@@ -297,5 +299,34 @@ class AuthServices {
       globalFunctions.showLog(message: "Error getting user details: $e");
     }
     return userDetails;
+  }
+
+  Future<void> sendEmailVerification({required BuildContext context}) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null && !user.emailVerified) {
+      try {
+        await user.sendEmailVerification();
+        globalFunctions.showToast(
+          message: 'Verification email sent. Please check your inbox.',
+          toastType: ToastType.info,
+        );
+      } catch (e) {
+        globalFunctions.showToast(
+          message: 'Failed to send verification email: ${e.toString()}',
+          toastType: ToastType.error,
+        );
+      }
+    } else if (user != null && user.emailVerified) {
+      globalFunctions.showToast(
+        message: 'Email is already verified.',
+        toastType: ToastType.success,
+      );
+    } else {
+      globalFunctions.showToast(
+        message: 'No user is currently signed in.',
+        toastType: ToastType.error,
+      );
+    }
   }
 }

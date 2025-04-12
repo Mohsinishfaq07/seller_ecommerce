@@ -10,6 +10,7 @@ class SellerModel {
   final String shopType;
   final UserType userType;
   final bool approved;
+  final bool? isEmailVerified; // Made optional by adding '?'
 
   SellerModel({
     required this.userId,
@@ -20,10 +21,11 @@ class SellerModel {
     required this.shopName,
     required this.shopType,
     required this.approved,
+    this.isEmailVerified, // Now optional in the constructor
   }) : userType = UserType.seller;
 
   Map<String, dynamic> toMap() {
-    return {
+    final map = <String, dynamic>{
       'userId': userId,
       'name': name,
       'email': email,
@@ -34,6 +36,10 @@ class SellerModel {
       'shopType': shopType,
       'approved': false,
     };
+    if (isEmailVerified != null) {
+      map['isEmailVerified'] = isEmailVerified;
+    }
+    return map;
   }
 
   factory SellerModel.fromMap(Map<String, dynamic> map) {
@@ -46,6 +52,7 @@ class SellerModel {
       shopName: map['shopName'] ?? '',
       shopType: map['shopType'] ?? '',
       approved: map['approved'] ?? false,
+      isEmailVerified: map['isEmailVerified'], // Can be null
     );
   }
 

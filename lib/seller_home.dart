@@ -130,17 +130,17 @@ class SellerHomeContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.grey,
                   child: Icon(Icons.person, size: 40, color: Colors.white),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text('dorSV98i',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
@@ -166,20 +166,20 @@ class SellerHomeContent extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
+      child: const Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text('Order',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               Text('13/02/2025 00:27:50', style: TextStyle(color: Colors.grey)),
             ],
           ),
-          const Divider(),
+          Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
+            children: [
               OrderStatusWidget(count: '0', label: 'To Process'),
               OrderStatusWidget(count: '0', label: 'Shipping'),
               OrderStatusWidget(count: '0', label: 'Review'),
@@ -197,15 +197,15 @@ class SellerHomeContent extends StatelessWidget {
         color: Colors.green,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Start your business right now!',
+          Text('Start your business right now!',
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16)),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           BusinessStepWidget(
               step: '1',
               label: 'Add Email',
@@ -231,7 +231,8 @@ class SellerHomeContent extends StatelessWidget {
 class OrderStatusWidget extends StatelessWidget {
   final String count;
   final String label;
-  const OrderStatusWidget({required this.count, required this.label});
+  const OrderStatusWidget(
+      {super.key, required this.count, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +254,7 @@ class BusinessStepWidget extends StatelessWidget {
   final String label;
   final Widget page;
   const BusinessStepWidget(
-      {required this.step, required this.label, required this.page});
+      {super.key, required this.step, required this.label, required this.page});
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +274,7 @@ class BusinessStepWidget extends StatelessWidget {
 
 class DummyPage extends StatelessWidget {
   final String title;
-  const DummyPage({required this.title});
+  const DummyPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

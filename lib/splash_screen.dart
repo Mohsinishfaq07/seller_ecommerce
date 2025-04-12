@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/providers/splash_screen_provider.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
-import 'package:flutter_application_1/view/auth/signup_page.dart';
+import 'package:flutter_application_1/view/auth/login_page.dart';
+import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WelcomeHomeScreen extends ConsumerWidget {
@@ -13,10 +15,18 @@ class WelcomeHomeScreen extends ConsumerWidget {
   void _navigateToSignUp(BuildContext context) {
     Future.delayed(const Duration(seconds: 6), () {
       if (context.mounted) {
-        constants.globalFunctions.nextScreenReplace(
-          context,
-          const CustomerSignUpPage(),
-        );
+        FirebaseAuth auth = FirebaseAuth.instance;
+        if (auth.currentUser != null) {
+          constants.globalFunctions.nextScreenReplace(
+            context,
+            const CustomerHomePage(),
+          );
+        } else {
+          constants.globalFunctions.nextScreenReplace(
+            context,
+            const CustomerLoginScreen(),
+          );
+        }
       }
     });
   }

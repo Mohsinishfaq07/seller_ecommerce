@@ -1,12 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/providers/auth_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/view/auth/login_page.dart';
+import 'package:flutter_application_1/view/auth/Verifyemail.dart';
 import 'package:flutter_application_1/widgets/custom_text_field.dart';
-import 'package:flutter_application_1/constants/app_styles.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum ShopType {
   online,
@@ -33,94 +32,200 @@ class CustomerSignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: Container(
-        height: screenHeight,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF00897B), Color(0xFF4DB6AC)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          // Background Gradient
+          Container(
+            height: screenHeight,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF00897B), Color(0xFF4DB6AC)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Static header section
-              const SizedBox(height: 20),
-              const Icon(
-                Icons.store_rounded,
-                size: 80,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-
-              // Scrollable form section
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    children: [
-                      // Scrollable form fields
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                spreadRadius: 5,
-                              ),
-                            ],
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxWidth: 350), // Reduced max width
+                  child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 15), // Reduced top spacing
+                          const Icon(
+                            Icons.store_rounded,
+                            size: 50, // Reduced icon size
+                            color: Color(0xFF00897B),
                           ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                // Name Field
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final auth = ref.watch(authProvider);
-                                    return CustomTextField(
-                                      controller: auth.userNameController,
-                                      label: 'Full Name',
-                                      prefixIcon: Icons.person_outline,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20),
+                          const SizedBox(height: 12), // Reduced spacing
+                          const Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 22, // Reduced title size
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF00897B),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final auth = ref.watch(authProvider);
+                              return CustomTextField(
+                                controller: auth.userNameController,
+                                label: 'Full Name',
+                                prefixIcon: Icons.person_outline,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final userType = ref.watch(userTypeProvider);
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Account Type',
+                                    style: TextStyle(
+                                      fontSize: 14, // Reduced label size
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF00897B),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6), // Reduced spacing
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 1,
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: DropdownButtonFormField<UserType>(
+                                      value: userType,
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6), // Reduced padding
+                                        border: InputBorder.none,
+                                        prefixIcon: Icon(
+                                          Icons.person_pin_outlined,
+                                          size: 20, // Reduced icon size
+                                          color: Color(0xFF00897B),
+                                        ),
+                                      ),
+                                      dropdownColor: Colors.white,
+                                      items: [
+                                        UserType.customer,
+                                        UserType.seller
+                                      ].map((UserType type) {
+                                        return DropdownMenuItem<UserType>(
+                                          value: type,
+                                          child: Text(
+                                            type == UserType.customer
+                                                ? 'Customer'
+                                                : 'Seller',
+                                            style: const TextStyle(
+                                              fontSize: 14, // Reduced text size
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (UserType? newValue) {
+                                        if (newValue != null) {
+                                          ref
+                                              .read(userTypeProvider.notifier)
+                                              .state = newValue;
+                                          ref
+                                              .read(authProvider)
+                                              .setUserType(newValue);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final auth = ref.watch(authProvider);
+                              return CustomTextField(
+                                controller: auth.emailController,
+                                label: 'Email',
+                                prefixIcon: Icons.email_outlined,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final auth = ref.watch(authProvider);
+                              return CustomTextField(
+                                controller: auth.numberController,
+                                label: 'Phone Number',
+                                prefixIcon: Icons.phone_outlined,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 12), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final userType = ref.watch(userTypeProvider);
+                              final auth = ref.watch(authProvider);
+                              final selectedShopType =
+                                  ref.watch(shopTypeStateProvider);
 
-                                // User Type Dropdown
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final userType =
-                                        ref.watch(userTypeProvider);
-                                    return Column(
+                              if (userType == UserType.seller) {
+                                return Column(
+                                  children: [
+                                    CustomTextField(
+                                      controller: auth.shopNameController,
+                                      label: 'Shop Name',
+                                      prefixIcon: Icons.store_outlined,
+                                    ),
+                                    const SizedBox(
+                                        height: 12), // Reduced spacing
+                                    Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         const Text(
-                                          'Account Type',
+                                          'Shop Type',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14, // Reduced label size
                                             fontWeight: FontWeight.w500,
                                             color: Color(0xFF00897B),
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(
+                                            height: 6), // Reduced spacing
                                         Container(
                                           decoration: BoxDecoration(
                                             color: Colors.white,
@@ -139,294 +244,155 @@ class CustomerSignUpPage extends StatelessWidget {
                                             ],
                                           ),
                                           child:
-                                              DropdownButtonFormField<UserType>(
-                                            value: userType,
+                                              DropdownButtonFormField<ShopType>(
+                                            value: selectedShopType,
                                             decoration: const InputDecoration(
                                               contentPadding:
                                                   EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 8),
+                                                      horizontal: 12,
+                                                      vertical:
+                                                          6), // Reduced padding
                                               border: InputBorder.none,
                                               prefixIcon: Icon(
-                                                Icons.person_pin_outlined,
+                                                Icons.store_outlined,
+                                                size: 20, // Reduced icon size
                                                 color: Color(0xFF00897B),
                                               ),
                                             ),
                                             dropdownColor: Colors.white,
-                                            items: [
-                                              UserType.customer,
-                                              UserType.seller
-                                            ].map((UserType type) {
-                                              return DropdownMenuItem<UserType>(
+                                            items: ShopType.values
+                                                .map((ShopType type) {
+                                              return DropdownMenuItem<ShopType>(
                                                 value: type,
                                                 child: Text(
-                                                  type == UserType.customer
-                                                      ? 'Customer'
-                                                      : 'Seller',
+                                                  type.displayName,
                                                   style: const TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize:
+                                                        14, // Reduced text size
                                                     color: Colors.black87,
                                                   ),
                                                 ),
                                               );
                                             }).toList(),
-                                            onChanged: (UserType? newValue) {
+                                            onChanged: (ShopType? newValue) {
                                               if (newValue != null) {
                                                 ref
-                                                    .read(userTypeProvider
+                                                    .read(shopTypeStateProvider
                                                         .notifier)
                                                     .state = newValue;
-                                                ref
-                                                    .read(authProvider)
-                                                    .setUserType(newValue);
+                                                auth.shopTypeController.text =
+                                                    newValue.displayName;
                                               }
                                             },
                                           ),
                                         ),
                                       ],
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-
-                                // Email Field
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final auth = ref.watch(authProvider);
-                                    return CustomTextField(
-                                      controller: auth.emailController,
-                                      label: 'Email',
-                                      prefixIcon: Icons.email_outlined,
-                                      keyboardType: TextInputType.emailAddress,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-
-                                // Phone Number Field
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final auth = ref.watch(authProvider);
-                                    return CustomTextField(
-                                      controller: auth.numberController,
-                                      label: 'Phone Number',
-                                      prefixIcon: Icons.phone_outlined,
-                                      keyboardType: TextInputType.phone,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-
-                                // Seller Specific Fields
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final userType =
-                                        ref.watch(userTypeProvider);
-                                    final auth = ref.watch(authProvider);
-                                    final selectedShopType =
-                                        ref.watch(shopTypeStateProvider);
-
-                                    if (userType == UserType.seller) {
-                                      return Column(
-                                        children: [
-                                          CustomTextField(
-                                            controller: auth.shopNameController,
-                                            label: 'Shop Name',
-                                            prefixIcon: Icons.store_outlined,
-                                          ),
-                                          const SizedBox(height: 20),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                'Shop Type',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Color(0xFF00897B),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                      color:
-                                                          Colors.grey.shade300),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.grey
-                                                          .withOpacity(0.1),
-                                                      spreadRadius: 1,
-                                                      blurRadius: 4,
-                                                      offset:
-                                                          const Offset(0, 2),
-                                                    ),
-                                                  ],
-                                                ),
-                                                child: DropdownButtonFormField<
-                                                    ShopType>(
-                                                  value: selectedShopType,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    contentPadding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 16,
-                                                            vertical: 8),
-                                                    border: InputBorder.none,
-                                                    prefixIcon: Icon(
-                                                      Icons.store_outlined,
-                                                      color: Color(0xFF00897B),
-                                                    ),
-                                                  ),
-                                                  dropdownColor: Colors.white,
-                                                  items: ShopType.values
-                                                      .map((ShopType type) {
-                                                    return DropdownMenuItem<
-                                                        ShopType>(
-                                                      value: type,
-                                                      child: Text(
-                                                        type.displayName,
-                                                        style: const TextStyle(
-                                                          fontSize: 16,
-                                                          color: Colors.black87,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged:
-                                                      (ShopType? newValue) {
-                                                    if (newValue != null) {
-                                                      ref
-                                                          .read(
-                                                              shopTypeStateProvider
-                                                                  .notifier)
-                                                          .state = newValue;
-                                                      auth.shopTypeController
-                                                              .text =
-                                                          newValue.displayName;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 20),
-                                        ],
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-
-                                // Password Field
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final auth = ref.watch(authProvider);
-                                    return CustomTextField(
-                                      controller: auth.passwordController,
-                                      label: 'Password',
-                                      prefixIcon: Icons.lock_outline,
-                                      isPassword: true,
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 20),
-
-                                // Confirm Password Field
-                                Consumer(
-                                  builder: (_, WidgetRef ref, __) {
-                                    final auth = ref.watch(authProvider);
-                                    return CustomTextField(
-                                      controller:
-                                          auth.confirmPasswordController,
-                                      label: 'Confirm Password',
-                                      prefixIcon: Icons.lock_outline,
-                                      isPassword: true,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Static bottom section
-                      const SizedBox(height: 30),
-                      // Sign Up Button
-                      Consumer(
-                        builder: (_, WidgetRef ref, __) {
-                          final auth = ref.watch(authProvider);
-                          final userType = ref.watch(userTypeProvider);
-                          final isLoading = auth.isLoading;
-
-                          return SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: isLoading
-                                  ? null
-                                  : () => _handleSignUp(
-                                      context, ref, auth, userType),
-                              style: AppStyles.primaryButtonStyle,
-                              child: isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Sign Up',
-                                      style: AppStyles.buttonTextStyle,
                                     ),
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Login Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Already have an account? ",
-                            style: TextStyle(color: Colors.white),
+                                    const SizedBox(
+                                        height: 12), // Reduced spacing
+                                  ],
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
                           ),
-                          TextButton(
-                            onPressed: () {
-                              constants.globalFunctions.nextScreen(
-                                context,
-                                const CustomerLoginScreen(),
+                          const SizedBox(height: 12), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final auth = ref.watch(authProvider);
+                              return CustomTextField(
+                                controller: auth.passwordController,
+                                label: 'Password',
+                                prefixIcon: Icons.lock_outline,
                               );
                             },
-                            child: const Text(
-                              "Login",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
                           ),
+                          const SizedBox(height: 12), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final auth = ref.watch(authProvider);
+                              return CustomTextField(
+                                controller: auth.confirmPasswordController,
+                                label: 'Confirm Password',
+                                prefixIcon: Icons.lock_outline,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20), // Reduced spacing
+                          Consumer(
+                            builder: (_, WidgetRef ref, __) {
+                              final auth = ref.watch(authProvider);
+                              final userType = ref.watch(userTypeProvider);
+                              final isLoading = auth.isLoading;
+
+                              return SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: isLoading
+                                      ? null
+                                      : () => _handleSignUp(
+                                          context, ref, auth, userType),
+                                  style: AppStyles.primaryButtonStyle,
+                                  child: isLoading
+                                      ? const SizedBox(
+                                          height: 18,
+                                          width: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Sign Up',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16), // Reduced spacing
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Already have an account?",
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 15),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: const Size(50, 30)),
+                                child: const Text(
+                                  "Log in", // Improved text
+                                  style: TextStyle(
+                                    color: Color(0xFF00897B),
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15), // Reduced bottom spacing
                         ],
                       ),
-                      const SizedBox(height: 20),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -449,7 +415,6 @@ class CustomerSignUpPage extends StatelessWidget {
       return;
     }
 
-    // Set loading state
     auth.setLoading(true);
 
     try {
@@ -465,11 +430,17 @@ class CustomerSignUpPage extends StatelessWidget {
         shopName: userType == UserType.seller ? shopNameController.text : null,
         shopType: userType == UserType.seller ? shopTypeController.text : null,
       );
+
+      constants.globalFunctions.nextScreenReplace(
+        context,
+        VerifyemailPage(userType: userType),
+      );
     } catch (e) {
-      // Error is already shown in auth service
-      debugPrint('Signup error: $e');
+      debugPrint('Signup error handled in _handleSignUp: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign up failed: ${e.toString()}')),
+      );
     } finally {
-      // Reset loading state
       auth.setLoading(false);
     }
   }

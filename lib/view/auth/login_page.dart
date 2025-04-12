@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/providers/auth_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/view/auth/signup_page.dart';
 import 'package:flutter_application_1/view/auth/forgot_password_screen.dart';
+import 'package:flutter_application_1/view/auth/signup_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CustomerLoginScreen extends StatelessWidget {
   const CustomerLoginScreen({Key? key}) : super(key: key);

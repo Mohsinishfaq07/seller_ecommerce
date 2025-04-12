@@ -7,6 +7,7 @@ class CustomerModel {
   final String password;
   final String number;
   final UserType userType;
+  final bool? isEmailVerified; // Made optional by adding '?'
 
   CustomerModel({
     required this.userId,
@@ -14,10 +15,11 @@ class CustomerModel {
     required this.email,
     required this.password,
     required this.number,
+    this.isEmailVerified, // Now optional in the constructor
   }) : userType = UserType.customer;
 
   Map<String, dynamic> toMap() {
-    return {
+    final map = <String, dynamic>{
       'userId': userId,
       'name': name,
       'email': email,
@@ -25,6 +27,10 @@ class CustomerModel {
       'number': number,
       'userType': userType.toString(),
     };
+    if (isEmailVerified != null) {
+      map['isEmailVerified'] = isEmailVerified;
+    }
+    return map;
   }
 
   factory CustomerModel.fromMap(Map<String, dynamic> map) {
@@ -34,6 +40,7 @@ class CustomerModel {
       email: map['email'] ?? '',
       password: map['password'] ?? '',
       number: map['number'] ?? '',
+      isEmailVerified: map['isEmailVerified'], // Can be null
     );
   }
 
