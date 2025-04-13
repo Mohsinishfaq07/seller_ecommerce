@@ -7,6 +7,7 @@ import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/seller_home.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
+import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 
 class VerifyemailPage extends StatefulWidget {
   final UserType userType; // Add this parameter
@@ -100,7 +101,7 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
       } else if (widget.userType == UserType.seller) {
         constants.globalFunctions.nextScreenReplace(
           context,
-          const SellerHomePage(),
+          const SellerNewHomePage(),
         );
       } else if (widget.userType == UserType.admin) {
         constants.globalFunctions.nextScreenReplace(

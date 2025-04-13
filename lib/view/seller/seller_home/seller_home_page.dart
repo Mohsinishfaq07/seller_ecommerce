@@ -88,7 +88,7 @@ class ProductsPage extends StatelessWidget {
               color: Colors.green,
               onTap: () => globalFunctions.nextScreen(
                 context,
-                ListedProducts(),
+                const ListedProducts(),
               ),
             ),
           ],
