@@ -1,21 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart' as badges;
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/categories_page.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/models/product_sell_model.dart';
-import 'package:flutter_application_1/view/customer/customer_profile/customer_profile_page.dart';
+import 'package:flutter_application_1/services/cart_service/cart_service.dart';
 import 'package:flutter_application_1/view/chat_page/chat_page.dart';
 import 'package:flutter_application_1/view/customer/cart/cart_page.dart';
 import 'package:flutter_application_1/view/customer/product_page/product_page.dart';
-import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
+import 'package:flutter_application_1/widgets/Itembage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart'; // Add this import
 
 class CustomerHomePage extends ConsumerWidget {
-    const CustomerHomePage({super.key});
+  const CustomerHomePage({super.key});
   // Add this at the beginning of the class
-
 
   Future<void> _handleLogout(BuildContext context) async {
     try {
@@ -40,7 +38,7 @@ class CustomerHomePage extends ConsumerWidget {
         ),
       );
 
-      if (shouldLogout ?? false){
+      if (shouldLogout ?? false) {
         await constants.authServices.signOut(context: context);
       }
     } catch (e) {
@@ -188,31 +186,27 @@ class CustomerHomePage extends ConsumerWidget {
     );
   }
 
-
-    @override
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-
+    final CartService cartService = CartService(); // Instantiate CartService
     return Container(
       decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-
-
         drawer: Drawer(
           child: Container(
             color: AppColors.white,
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                DrawerHeader(
-                  decoration: const BoxDecoration(
+                const DrawerHeader(
+                  decoration: BoxDecoration(
                     color: AppColors.primary,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
+                    children: [
                       CircleAvatar(
                         radius: 30,
                         backgroundColor: AppColors.white,
@@ -235,7 +229,7 @@ class CustomerHomePage extends ConsumerWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.shopping_cart, color: AppColors.primary),
+                  leading: const CartItemCountBadge(),
                   title: const Text('Cart'),
                   onTap: () {
                     Navigator.pop(context); // Close drawer
@@ -269,15 +263,11 @@ class CustomerHomePage extends ConsumerWidget {
           ),
         ),
         resizeToAvoidBottomInset: true,
-
         appBar: AppBar(
           iconTheme: const IconThemeData(color: AppColors.white),
           // automaticallyImplyLeading: false,
           backgroundColor: AppColors.primary,
           centerTitle: true,
-
-
-
         ),
         body: SafeArea(
           child: StreamBuilder<DocumentSnapshot>(
@@ -565,4 +555,4 @@ class CustomerHomePage extends ConsumerWidget {
       ),
     );
   }
- }
+}
