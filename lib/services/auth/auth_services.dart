@@ -9,7 +9,7 @@ import 'package:flutter_application_1/models/user_model.dart';
 import 'package:flutter_application_1/seller_home.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
-import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
 import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

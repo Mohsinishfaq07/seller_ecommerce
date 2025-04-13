@@ -5,8 +5,8 @@ import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/cart_model.dart';
 
-class CustomerOrdersPage extends StatelessWidget {
-  const CustomerOrdersPage({super.key});
+class OrdersPage extends StatelessWidget {
+  const OrdersPage({super.key});
 
   Stream<List<Map<String, dynamic>>> fetchCustomerOrders() {
     return FirebaseFirestore.instance

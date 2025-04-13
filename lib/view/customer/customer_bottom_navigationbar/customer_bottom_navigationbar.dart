@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
+import 'package:flutter_application_1/view/customer/customer_cartegories.dart';
+import 'package:flutter_application_1/view/customer/orders/customer_order.dart';
 import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../categories_page.dart';
-import 'customer_profile/customer_profile_page.dart';
-import 'home_page/customer_home.dart';
+import '../../../categories_page.dart';
+import '../customer_profile/customer_profile_page.dart';
+import '../home_page/customer_home.dart';
 final currentIndexProvider = StateProvider<int>((ref) => 0);
 
 
@@ -19,8 +21,8 @@ class CustomerBottomNavigationBar extends ConsumerWidget {
 
     final pages = [
       const CustomerHomePage(),
-      const CategoriesPage(),
-      const OrdersPage(),
+      const CategoriesScreen(),
+      const OrdersScreen(),
       const CustomerProfilePage(),
     ];
 

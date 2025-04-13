@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/customer_model.dart';
 import 'package:flutter_application_1/constants/constants.dart';
-import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 
 import '../enums/global_enums.dart';

@@ -36,11 +36,16 @@ class ProductDetailsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+
+
                 SizedBox(
                   height: 300,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: product.images.length,
+
+
                     itemBuilder: (context, index) {
                       return Container(
                         width: MediaQuery.of(context).size.width,
