@@ -6,6 +6,7 @@ import 'package:flutter_application_1/providers/auth_provider.dart';
 import 'package:flutter_application_1/view/auth/Verifyemail.dart';
 import 'package:flutter_application_1/widgets/custom_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 
 enum ShopType {
   online,
@@ -25,14 +26,44 @@ enum ShopType {
 }
 
 final shopTypeStateProvider = StateProvider<ShopType>((ref) => ShopType.online);
+final userTypeProvider = StateProvider<UserType>(
+    (ref) => UserType.customer); // Define userTypeProvider
 
-class CustomerSignUpPage extends StatelessWidget {
+class UserTypePrefs {
+  static const String _userTypeKey = 'userType';
+
+  /// Stores the [UserType] in SharedPreferences.
+  static Future<bool> storeUserType(UserType userType) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString(_userTypeKey, userType.name);
+  }
+
+  /// Fetches the stored [UserType] from SharedPreferences.
+  /// Returns null if no user type is stored.
+  static Future<UserType?> fetchUserType() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userTypeValue = prefs.getString(_userTypeKey);
+    if (userTypeValue != null) {
+      return UserType.values.firstWhere((type) => type.name == userTypeValue);
+    }
+    return null;
+  }
+
+  /// Clears the stored user type from SharedPreferences.
+  static Future<bool> clearUserType() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.remove(_userTypeKey);
+  }
+}
+
+class CustomerSignUpPage extends ConsumerWidget {
   const CustomerSignUpPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+    final userType = ref.watch(userTypeProvider);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -430,7 +461,8 @@ class CustomerSignUpPage extends StatelessWidget {
         shopName: userType == UserType.seller ? shopNameController.text : null,
         shopType: userType == UserType.seller ? shopTypeController.text : null,
       );
-
+      // Store the user type after successful account creation
+      await UserTypePrefs.storeUserType(userType);
       constants.globalFunctions.nextScreenReplace(
         context,
         VerifyemailPage(userType: userType),

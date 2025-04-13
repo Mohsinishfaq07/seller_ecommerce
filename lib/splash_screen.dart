@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
+import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/providers/splash_screen_provider.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
+import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,15 +14,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class WelcomeHomeScreen extends ConsumerWidget {
   const WelcomeHomeScreen({Key? key}) : super(key: key);
 
-  void _navigateToSignUp(BuildContext context) {
+  Future<void> _navigateToSignUp(BuildContext context) async {
+    UserType? fetchedType = await UserTypePrefs.fetchUserType();
     Future.delayed(const Duration(seconds: 6), () {
       if (context.mounted) {
         FirebaseAuth auth = FirebaseAuth.instance;
         if (auth.currentUser != null) {
-          constants.globalFunctions.nextScreenReplace(
-            context,
-            const CustomerHomePage(),
-          );
+          if (fetchedType == UserType.customer) {
+            constants.globalFunctions.nextScreenReplace(
+              context,
+              const CustomerHomePage(),
+            );
+          } else if (fetchedType == UserType.seller) {
+          } else {
+            constants.globalFunctions.nextScreenReplace(
+              context,
+              const AdminHomePage(),
+            );
+          }
         } else {
           constants.globalFunctions.nextScreenReplace(
             context,
