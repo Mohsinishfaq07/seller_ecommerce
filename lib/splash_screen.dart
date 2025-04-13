@@ -6,6 +6,7 @@ import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/providers/splash_screen_provider.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +20,7 @@ class WelcomeHomeScreen extends ConsumerWidget {
         if (auth.currentUser != null) {
           constants.globalFunctions.nextScreenReplace(
             context,
-            const CustomerHomePage(),
+             const CustomerBottomNavigationBar(),
           );
         } else {
           constants.globalFunctions.nextScreenReplace(

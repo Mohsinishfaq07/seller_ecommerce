@@ -88,7 +88,7 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
       if (widget.userType == UserType.customer) {
         constants.globalFunctions.nextScreenReplace(
           context,
-          const CustomerHomePage(),
+           CustomerHomePage(),
         );
       } else if (widget.userType == UserType.seller) {
         constants.globalFunctions.nextScreenReplace(

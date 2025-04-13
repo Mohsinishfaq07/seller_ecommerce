@@ -1,15 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/categories_page.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/models/product_sell_model.dart';
+import 'package:flutter_application_1/view/customer/customer_profile/customer_profile_page.dart';
 import 'package:flutter_application_1/view/chat_page/chat_page.dart';
 import 'package:flutter_application_1/view/customer/cart/cart_page.dart';
 import 'package:flutter_application_1/view/customer/product_page/product_page.dart';
+import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart'; // Add this import
 
 class CustomerHomePage extends ConsumerWidget {
-  const CustomerHomePage({super.key});
+    const CustomerHomePage({super.key});
+  // Add this at the beginning of the class
+
 
   Future<void> _handleLogout(BuildContext context) async {
     try {
@@ -24,7 +30,7 @@ class CustomerHomePage extends ConsumerWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () => Navigator.pop(context, true),
               child: const Text(
                 'Logout',
                 style: TextStyle(color: AppColors.error),
@@ -34,7 +40,7 @@ class CustomerHomePage extends ConsumerWidget {
         ),
       );
 
-      if (shouldLogout ?? false) {
+      if (shouldLogout ?? false){
         await constants.authServices.signOut(context: context);
       }
     } catch (e) {
@@ -67,9 +73,11 @@ class CustomerHomePage extends ConsumerWidget {
         errorBuilder: (context, error, stackTrace) {
           return Container(
             height: 120,
+            width: double.infinity,
             color: AppColors.primaryLight.withOpacity(0.1),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(
                   Icons.image_not_supported,
@@ -180,64 +188,96 @@ class CustomerHomePage extends ConsumerWidget {
     );
   }
 
-  @override
+
+    @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+
     return Container(
       decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: AppColors.primary,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.message, color: AppColors.white),
-              onPressed: () {
-                constants.globalFunctions.nextScreen(
-                  context,
-                  const ChatPage(),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.favorite_border, color: AppColors.white),
-              onPressed: () {},
-            ),
-            Stack(
-              alignment: Alignment.topRight,
+
+
+        drawer: Drawer(
+          child: Container(
+            color: AppColors.white,
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart, color: AppColors.white),
-                  onPressed: () => constants.globalFunctions.nextScreen(
-                    context,
-                    const CartPage(),
+                DrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: const [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: AppColors.white,
+                        child: Icon(
+                          Icons.person,
+                          size: 35,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Welcome',
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Text(
-                      '0',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
+                ListTile(
+                  leading: const Icon(Icons.shopping_cart, color: AppColors.primary),
+                  title: const Text('Cart'),
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    constants.globalFunctions.nextScreen(
+                      context,
+                      const CartPage(),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.message, color: AppColors.primary),
+                  title: const Text('Messages'),
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    constants.globalFunctions.nextScreen(
+                      context,
+                      const ChatPage(),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout, color: AppColors.error),
+                  title: const Text('Logout'),
+                  onTap: () {
+                    Navigator.pop(context); // Close drawer
+                    _handleLogout(context);
+                  },
                 ),
               ],
             ),
-            IconButton(
-              icon: const Icon(Icons.person_outline, color: AppColors.white),
-              onPressed: () => _handleLogout(context),
-            ),
-          ],
+          ),
+        ),
+        resizeToAvoidBottomInset: true,
+
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: AppColors.white),
+          // automaticallyImplyLeading: false,
+          backgroundColor: AppColors.primary,
+          centerTitle: true,
+
+
+
         ),
         body: SafeArea(
           child: StreamBuilder<DocumentSnapshot>(
@@ -522,31 +562,7 @@ class CustomerHomePage extends ConsumerWidget {
             },
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: AppColors.white,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: AppColors.textSecondary,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.category_outlined),
-              label: 'Categories',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined),
-              label: 'Orders',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile',
-            ),
-          ],
-        ),
       ),
     );
   }
-}
+ }

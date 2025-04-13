@@ -2,13 +2,11 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
-import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/cart_model.dart';
 import 'package:flutter_application_1/models/product_sell_model.dart';
 import 'package:flutter_application_1/services/cart_service/cart_service.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final ProductSellModel product;
@@ -180,7 +178,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     chatService.sendFirstMessage(
-                      message: 'Hello Sir',
+                      message: 'Hello Sir i am interested in this product',
                       sellerId: product.uploadedBy,
                       buyerId: FirebaseAuth.instance.currentUser!.uid,
                     );
@@ -191,7 +189,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   icon: const Icon(Icons.chat_bubble_outline),
-                  label: const Text('Message Seller'),
+                  label: const Text('Message'),
                 ),
               ),
               const SizedBox(width: 16),
@@ -218,7 +216,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     foregroundColor: AppColors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  icon: const Icon(Icons.shopping_cart),
+                  icon: const Icon(Icons.shopping_cart,color: Colors.white,),
                   label: const Text('Add to Cart'),
                 ),
               ),
