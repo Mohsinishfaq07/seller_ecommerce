@@ -18,6 +18,25 @@ class CustomerModel {
     this.isEmailVerified, // Now optional in the constructor
   }) : userType = UserType.customer;
 
+  // Add the copyWith method
+  CustomerModel copyWith({
+    String? userId,
+    String? name,
+    String? email,
+    String? password,
+    String? number,
+    bool? isEmailVerified,
+  }) {
+    return CustomerModel(
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      number: number ?? this.number,
+      isEmailVerified: isEmailVerified ?? this.isEmailVerified,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{
       'userId': userId,

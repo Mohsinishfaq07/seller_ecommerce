@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/cart_model.dart';
 import 'package:flutter_application_1/models/product_sell_model.dart';
-import 'package:flutter_application_1/models/user_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/services/cart_service/cart_service.dart';
 
 class FirestoreService {
