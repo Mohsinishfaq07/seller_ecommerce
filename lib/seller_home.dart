@@ -29,39 +29,41 @@ class _SellerHomePageState extends ConsumerState<SellerHomePage> {
     });
   }
 
-  Future<void> _handleLogout() async {
-    try {
-      // Show confirmation dialog
-      final shouldLogout = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Logout'),
-          content: const Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text(
-                'Logout',
-                style: TextStyle(color: AppColors.error),
-              ),
-            ),
-          ],
-        ),
-      );
+  // Future<void> _handleLogout() async {
+  //   try {
+  //     // Show confirmation dialog
+  //     final shouldLogout = await showDialog<bool>(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: const Text('Logout'),
+  //         content: const Text('Are you sure you want to logout?'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context, false),
+  //             child: const Text('Cancel'),
+  //           ),
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context, true),
+  //             child: const Text(
+  //               'Logout',
+  //               style: TextStyle(color: AppColors.error),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //
+  //     if (shouldLogout ?? false) {
+  //
+  //       await constants.authServices.signOut(context: context);
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Failed to logout. Please try again.')),
+  //     );
+  //   }
+  // }
 
-      if (shouldLogout ?? false) {
-        await constants.authServices.signOut(context: context);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to logout. Please try again.')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +95,39 @@ class SellerHomeContent extends StatelessWidget {
   void navigateToPage(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
+  Future<void> _handleLogout(BuildContext context) async {
+    try {
+      final shouldLogout = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: AppColors.error),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldLogout ?? false) {
+        await constants.authServices.signOut(context: context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to logout. Please try again.')),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -109,20 +144,21 @@ class SellerHomeContent extends StatelessWidget {
         iconTheme: const IconThemeData(color: AppColors.black),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {},
+            icon:   const Icon(Icons.logout),
+            onPressed: () async  {await _handleLogout(context);},
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              // Get the root navigator context
-              final rootContext = Navigator.of(context).context;
-              await (rootContext
-                      .findAncestorStateOfType<_SellerHomePageState>()
-                      ?._handleLogout() ??
-                  Future.value());
-            },
-          ),
+
+          // IconButton(
+          //   icon: const Icon(Icons.logout),
+          //   onPressed: () async {
+          //     // Get the root navigator context
+          //     final rootContext = Navigator.of(context).context;
+          //     await (rootContext
+          //             .findAncestorStateOfType<_SellerHomePageState>()
+          //             ?._handleLogout() ??
+          //         Future.value());
+          //   },
+          // ),
         ],
       ),
       body: SingleChildScrollView(

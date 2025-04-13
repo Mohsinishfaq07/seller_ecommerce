@@ -11,6 +11,7 @@ import 'package:flutter_application_1/utils/screen_utils.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
 import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart';
+import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashScreen extends ConsumerWidget {
@@ -40,7 +41,7 @@ class SplashScreen extends ConsumerWidget {
               } else if (userType == UserType.seller) {
                 constants.globalFunctions.nextScreenReplace(
                   context,
-                  const SellerHomePage(),
+                  const SellerNewHomePage(),
                 );
               } else if (userType == UserType.admin) {
                 constants.globalFunctions.nextScreenReplace(
