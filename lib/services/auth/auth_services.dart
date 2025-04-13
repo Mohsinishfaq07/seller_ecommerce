@@ -9,6 +9,7 @@ import 'package:flutter_application_1/models/user_model.dart';
 import 'package:flutter_application_1/seller_home.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -119,7 +120,7 @@ class AuthServices {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const CustomerHomePage()),
+                    builder: (context) =>   CustomerBottomNavigationBar()),
               );
             }
           } else {
@@ -198,7 +199,7 @@ class AuthServices {
           );
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const CustomerHomePage()),
+            MaterialPageRoute(builder: (context) =>   CustomerBottomNavigationBar()),
           );
         }
       } else {
