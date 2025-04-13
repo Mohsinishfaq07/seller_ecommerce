@@ -1,18 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/cart_model.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartService {
   static const String cartKey = 'cartItems';
-
-  // Stream to fetch cart items
-
-  // Stream to fetch total price
   static Stream<double> get totalStream async* {
     while (true) {
       await Future.delayed(const Duration(seconds: 1));

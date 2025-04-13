@@ -83,6 +83,7 @@ class _CustomerProfilePageState extends ConsumerState<CustomerProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.teal.shade50,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.teal),
