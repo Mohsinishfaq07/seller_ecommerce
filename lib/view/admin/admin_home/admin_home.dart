@@ -12,8 +12,6 @@ import 'package:flutter_application_1/view/admin/products/uploaded_products.dart
 import 'package:flutter_application_1/view/admin/sellers/approved_sellers.dart';
 import 'package:flutter_application_1/view/admin/sellers/non_approved_sellers.dart';
 
-
-
 class AdminHomePage extends StatelessWidget {
   const AdminHomePage({super.key});
 
@@ -36,8 +34,7 @@ class AdminHomePage extends StatelessWidget {
             IconButton(
               onPressed: () {
                 authServices.signOut(context: context).then((val) {
-                  globalFunctions.nextScreen(
-                      context, const WelcomeHomeScreen());
+                  globalFunctions.nextScreen(context, const SplashScreen());
                 });
               },
               icon: const Icon(Icons.exit_to_app, color: AppColors.white),
@@ -116,21 +113,23 @@ class AdminHomePage extends StatelessWidget {
                     icon: Icons.list,
                     onPressed: () {
                       globalFunctions.nextScreen(
-                          context, UploadedCategoryScreen());
+                          context, const UploadedCategoryScreen());
                     },
                   ),
                   _buildAdminButton(
                     title: "All Products",
                     icon: Icons.inventory,
                     onPressed: () {
-                      globalFunctions.nextScreen(context, AllProductsScreen());
+                      globalFunctions.nextScreen(
+                          context, const AllProductsScreen());
                     },
                   ),
                   _buildAdminButton(
                     title: "All Orders",
                     icon: Icons.card_travel,
                     onPressed: () {
-                      globalFunctions.nextScreen(context, AdminOrdersPage());
+                      globalFunctions.nextScreen(
+                          context, const AdminOrdersPage());
                     },
                   ),
                 ],

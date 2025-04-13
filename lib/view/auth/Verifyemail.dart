@@ -30,7 +30,10 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
     isEmailVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
 
     if (!isEmailVerified) {
-      sendVerificationEmail();
+      // Move the initial email sending to after the build is complete
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        sendVerificationEmail();
+      });
 
       timer = Timer.periodic(
         const Duration(seconds: 3),
@@ -69,9 +72,13 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
       } else {
         print('Non-FirebaseAuth Error sending verification email: $e');
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      // Access ScaffoldMessenger in the build method
+      if (mounted) {
+        // Check if the widget is still in the tree
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     }
   }
 
@@ -88,7 +95,7 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
       if (widget.userType == UserType.customer) {
         constants.globalFunctions.nextScreenReplace(
           context,
-           CustomerHomePage(),
+          const CustomerHomePage(),
         );
       } else if (widget.userType == UserType.seller) {
         constants.globalFunctions.nextScreenReplace(
@@ -140,7 +147,10 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
                 ),
                 const SizedBox(height: 20),
                 TextButton(
-                  onPressed: () => FirebaseAuth.instance.signOut(),
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
+                  },
                   child: const Text(
                     'Cancel',
                     style: TextStyle(fontSize: 16, color: Colors.redAccent),
