@@ -6,19 +6,18 @@ import 'package:flutter_application_1/constants/app_styles.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/providers/splash_screen_provider.dart';
-import 'package:flutter_application_1/seller_home.dart';
 import 'package:flutter_application_1/utils/screen_utils.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/auth/login_page.dart';
 import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
-import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
+import 'package:flutter_application_1/view/seller/Seller%20BottomNavbar/Seller_bottom_Nav.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SplashScreen extends ConsumerWidget {
   const SplashScreen({Key? key}) : super(key: key);
   Future<void> _navigateToSignUp(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
-    Future.delayed(const Duration(seconds: 6), () async {
+    Future.delayed(const Duration(seconds: 3), () async {
       if (context.mounted) {
         if (user != null) {
           try {
@@ -39,10 +38,26 @@ class SplashScreen extends ConsumerWidget {
                   const CustomerBottomNavigationBar(),
                 );
               } else if (userType == UserType.seller) {
-                constants.globalFunctions.nextScreenReplace(
-                  context,
-                  const SellerNewHomePage(),
-                );
+                //check seller approval status here
+                final bool isApproved = userData.get('approved') ??
+                    false; //default to false if null
+                if (isApproved) {
+                  constants.globalFunctions.nextScreenReplace(
+                    context,
+                    const SellerDashboardScreen(),
+                  );
+                } else {
+             
+                  constants.globalFunctions.nextScreenReplace(
+                    context,
+                    const CustomerLoginScreen(),
+                    
+                  );
+                       constants.globalFunctions.showToast(
+                      message:
+                          'Your account is not approved yet. Please wait for admin approval.',
+                      toastType: ToastType.info);
+                }
               } else if (userType == UserType.admin) {
                 constants.globalFunctions.nextScreenReplace(
                   context,
@@ -126,3 +141,4 @@ class SplashScreen extends ConsumerWidget {
     );
   }
 }
+

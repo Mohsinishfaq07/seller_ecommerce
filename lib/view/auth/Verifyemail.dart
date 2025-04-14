@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/enums/global_enums.dart';
-import 'package:flutter_application_1/seller_home.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
 import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
-import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
 
 class VerifyemailPage extends StatefulWidget {
   final UserType userType; // Add this parameter
@@ -99,10 +98,11 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
           const CustomerHomePage(),
         );
       } else if (widget.userType == UserType.seller) {
-        constants.globalFunctions.nextScreenReplace(
-          context,
-          const SellerNewHomePage(),
-        );
+              constants.globalFunctions.showToast(
+                  message: 'Email Verfied Now Wait \n For Admin Approval For Seller Acount',
+                  toastType: ToastType.success);
+           constants.authServices.signOut(context: context);
+
       } else if (widget.userType == UserType.admin) {
         constants.globalFunctions.nextScreenReplace(
           context,
@@ -118,47 +118,70 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
           child: Text(
               'Email Verified! You can now login.')) // You might want a different UI here
       : Scaffold(
-          appBar: AppBar(
-            title: const Text('Verify Email'),
+        backgroundColor: Colors.grey.shade400,
+        appBar: AppBar(
+          title: const Text("Verify Email"),
+          centerTitle: true,
+          automaticallyImplyLeading: false,
+          backgroundColor: AppColors.accent,
+          titleTextStyle: const TextStyle(
+            color: Colors.black,
+            fontSize: 25,
+            fontWeight: FontWeight.bold
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'A verification email has been sent to your email address.',
-                  style: TextStyle(fontSize: 18),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Please check your inbox and click the link to verify your email.',
-                  style: TextStyle(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: canResendEmail ? sendVerificationEmail : null,
-                  icon: const Icon(Icons.email, size: 24),
-                  label: const Text(
-                    'Resend Email',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: 16, color: Colors.redAccent),
-                  ),
-                ),
-              ],
+        ),
+     body:  Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            color: AppColors.accent,
+            elevation: 8,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'A verification email has been sent to your email address.',
+                    style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Please check your inbox and click the link to verify your email.',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: canResendEmail ? sendVerificationEmail : null,
+                    icon: const Icon(Icons.email, size: 24),
+                    label: const Text(
+                      'Resend Email',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      
           ),
         );
 }

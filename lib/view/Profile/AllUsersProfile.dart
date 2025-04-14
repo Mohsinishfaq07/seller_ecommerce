@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/providers/UserprofileProvider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomerProfilePage extends ConsumerStatefulWidget {
-  const CustomerProfilePage({Key? key}) : super(key: key);
+class UserProfilePage extends ConsumerStatefulWidget {
+  const UserProfilePage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<CustomerProfilePage> createState() =>
+  ConsumerState<UserProfilePage> createState() =>
       _CustomerProfilePageState();
 }
 
-class _CustomerProfilePageState extends ConsumerState<CustomerProfilePage> {
+class _CustomerProfilePageState extends ConsumerState<UserProfilePage> {
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
   bool _isEditing = false;

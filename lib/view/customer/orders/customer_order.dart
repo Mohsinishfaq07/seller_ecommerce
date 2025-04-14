@@ -1,51 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/customer_order_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/customer_order_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_application_1/constants/app_colors.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/models/customer_order_model.dart';
 
-
-final userOrdersProvider = StreamProvider<List<OrderModel>>((ref) {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user == null) return const Stream.empty();
-
-  return FirebaseFirestore.instance
-      .collection('orders')
-      .where('customerId', isEqualTo: user.uid)
-      .snapshots()
-      .map((snapshot) =>
-      snapshot.docs.map((doc) => OrderModel.fromMap(doc.data())).toList());
-});
-
-//
-// final userOrdersProvider = StreamProvider<List<OrderModel>>((ref) {
-//   final user = FirebaseAuth.instance.currentUser;
-//   if (user == null) return const Stream.empty();
-//
-//   return FirebaseFirestore.instance
-//       .collection('orders')
-//       .where('customerId', isEqualTo: user.uid)
-//       .orderBy('orderDate', descending: true)
-//       .snapshots()
-//       .map((snapshot) =>
-//       snapshot.docs.map((doc) => OrderModel.fromMap(doc.data())).toList());
-// });
-
-class OrdersScreen extends ConsumerWidget {
+class OrdersScreen extends StatelessWidget {
   const OrdersScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ordersAsync = ref.watch(userOrdersProvider);
+  Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
 
     return Container(
       decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
@@ -63,121 +27,161 @@ class OrdersScreen extends ConsumerWidget {
             ),
           ),
         ),
-        body: ordersAsync.when(
-          data: (orders) {
-            if (orders.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.shopping_bag_outlined,
-                      size: 64,
-                      color: AppColors.white.withOpacity(0.7),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No orders found',
-                      style: TextStyle(
-                        color: AppColors.white.withOpacity(0.9),
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
+        body: user == null
+            ? const Center(
+                child: Text(
+                  'Please log in to view your orders.',
+                  style: TextStyle(color: AppColors.white),
                 ),
-              );
-            }
-
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: orders.length,
-              itemBuilder: (context, index) {
-                final order = orders[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.white.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+              )
+            : StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('orders')
+                    .where('customerId', isEqualTo: user.uid)
+                    .orderBy('orderDate', descending: true)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Something went wrong: ${snapshot.error}',
+                        style: const TextStyle(color: AppColors.white),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12),
+                    );
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.white),
+                      ),
+                    );
+                  }
+
+                  if (snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 64,
+                            color: AppColors.white.withOpacity(0.7),
                           ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Order #${order.orderId.substring(0, 8)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
-                              ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No orders found',
+                            style: TextStyle(
+                              color: AppColors.white.withOpacity(0.9),
+                              fontSize: 18,
                             ),
-                            _buildStatusChip(order.orderStatus),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final orderData =
+                          snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                      final order = OrderModel.fromMap(orderData);
+
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: order.productImage.startsWith("http")
-                                  ? Image.network(
-                                order.productImage,
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.cover,
-                              )
-                                  : Container(
-                                width: 80,
-                                height: 80,
-                                color: AppColors.primaryLight,
-                                child: const Icon(Icons.image),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.1),
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(12),
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    order.productName,
+                                    'Order #${order.orderId.substring(0, 8)}',
                                     style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Quantity: ${order.quantity}',
-                                    style: TextStyle(
-                                      color: AppColors.textSecondary.withOpacity(0.8),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Price: ₹${order.productPrice}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.primary,
+                                    ),
+                                  ),
+                                  _buildStatusChip(order.orderStatus),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: order.productImage.startsWith("http")
+                                        ? Image.network(
+                                            order.productImage,
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            width: 80,
+                                            height: 80,
+                                            color: AppColors.primaryLight,
+                                            child: const Icon(Icons.image),
+                                          ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          order.productName,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Quantity: ${order.quantity}',
+                                          style: TextStyle(
+                                            color: AppColors.textSecondary
+                                                .withOpacity(0.8),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Price: ₹${order.productPrice}',
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -185,28 +189,11 @@ class OrdersScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-          loading: () => const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
-            ),
-          ),
-          error: (err, stack) => Center(
-            child: Text(
-              'Error loading orders',
-              style: TextStyle(
-                color: AppColors.white.withOpacity(0.9),
-                fontSize: 16,
+                      );
+                    },
+                  );
+                },
               ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -217,14 +204,11 @@ class OrdersScreen extends ConsumerWidget {
       case 'pending':
         chipColor = Colors.orange;
         break;
-      case 'processing':
+      case 'active':
         chipColor = Colors.blue;
         break;
-      case 'completed':
+      case 'dispatched':
         chipColor = Colors.green;
-        break;
-      case 'cancelled':
-        chipColor = Colors.red;
         break;
       default:
         chipColor = Colors.grey;

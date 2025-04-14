@@ -89,8 +89,8 @@ class FirestoreService {
   makeOrder({required List<CardModel> orders}) {
     try {
       for (var order in orders) {
-        FirebaseFirestore.instance
-            .collection('orders')
+          FirebaseFirestore.instance
+              .collection('orders')
             .doc(order.orderId)
             .set(order.toMap());
       }

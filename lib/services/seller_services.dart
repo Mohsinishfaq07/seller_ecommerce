@@ -4,7 +4,7 @@ import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/models/seller_model.dart';
 import 'package:flutter_application_1/constants/constants.dart';
 import 'package:flutter_application_1/seller_home.dart';
-import 'package:flutter_application_1/view/seller/seller_home/seller_home_page.dart';
+import 'package:flutter_application_1/view/seller/Seller%20BottomNavbar/Seller_bottom_Nav.dart';
 
 class SellerServices {
   Future<void> createSellerAccount({
@@ -52,7 +52,7 @@ class SellerServices {
         // Navigate to seller home
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const SellerNewHomePage()),
+          MaterialPageRoute(builder: (context) => const SellerDashboardScreen()),
         );
       }
     } catch (e) {
