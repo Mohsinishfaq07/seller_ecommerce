@@ -38,30 +38,14 @@ class SplashScreen extends ConsumerWidget {
                   const CustomerBottomNavigationBar(),
                 );
               } else if (userType == UserType.seller) {
-                //check seller approval status here
-                final bool isApproved = userData.get('approved') ??
-                    false; //default to false if null
-                if (isApproved) {
-                  constants.globalFunctions.nextScreenReplace(
-                    context,
-                    const SellerDashboardScreen(),
-                  );
-                } else {
-             
-                  constants.globalFunctions.nextScreenReplace(
-                    context,
-                    const CustomerLoginScreen(),
-                    
-                  );
-                       constants.globalFunctions.showToast(
-                      message:
-                          'Your account is not approved yet. Please wait for admin approval.',
-                      toastType: ToastType.info);
-                }
+               constants.globalFunctions.nextScreenReplace(
+                  context,
+                  const AdminHomePage(),
+                );
               } else if (userType == UserType.admin) {
                 constants.globalFunctions.nextScreenReplace(
                   context,
-                  const AdminHomePage(),
+                   const SellerDashboardScreen(),
                 );
               }
             }
