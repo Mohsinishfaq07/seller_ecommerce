@@ -255,6 +255,13 @@ class CustomerSignUpPage extends ConsumerWidget {
                                             color: Color(0xFF00897B),
                                           ),
                                         ),
+                                        CustomTextField(
+                                          controller: auth.shopNameController,
+                                          label: userType == UserType.seller
+                                              ? 'Shop Address'
+                                              : "Address",
+                                          prefixIcon: Icons.store_outlined,
+                                        ),
                                         const SizedBox(
                                             height: 6), // Reduced spacing
                                         Container(
