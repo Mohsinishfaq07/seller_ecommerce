@@ -32,20 +32,21 @@ class SplashScreen extends ConsumerWidget {
                 (e) => e.toString() == userTypeString,
                 orElse: () => UserType.customer, // Default to customer
               );
+              print(userType);
               if (userType == UserType.customer) {
                 constants.globalFunctions.nextScreenReplace(
                   context,
                   const CustomerBottomNavigationBar(),
                 );
               } else if (userType == UserType.seller) {
-               constants.globalFunctions.nextScreenReplace(
+                constants.globalFunctions.nextScreenReplace(
                   context,
-                  const AdminHomePage(),
+                  const SellerDashboardScreen(),
                 );
               } else if (userType == UserType.admin) {
                 constants.globalFunctions.nextScreenReplace(
                   context,
-                   const SellerDashboardScreen(),
+                  const AdminHomePage(),
                 );
               }
             }
@@ -125,4 +126,3 @@ class SplashScreen extends ConsumerWidget {
     );
   }
 }
-
