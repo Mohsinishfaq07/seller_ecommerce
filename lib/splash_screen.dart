@@ -33,7 +33,16 @@ class SplashScreen extends ConsumerWidget {
                 orElse: () => UserType.customer, // Default to customer
               );
               print(userType);
-              if (userType == UserType.customer) {
+            // if(userType!=UserType.admin && !user.emailVerified){
+            //           constants.globalFunctions.showToast(message: "Email Not Verified \n Please Verify Your Email \n From Your Email Inbox",toastType: ToastType.error);
+            //        constants.globalFunctions.nextScreenReplace(
+            //       context,
+            //       const CustomerLoginScreen(),
+            //     );
+            //     return;
+            //   }
+            // else 
+             if (userType == UserType.customer) {
                 constants.globalFunctions.nextScreenReplace(
                   context,
                   const CustomerBottomNavigationBar(),

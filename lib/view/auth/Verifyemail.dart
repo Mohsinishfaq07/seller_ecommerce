@@ -6,7 +6,7 @@ import 'package:flutter_application_1/constants/app_colors.dart';
 import 'package:flutter_application_1/constants/constants.dart' as constants;
 import 'package:flutter_application_1/enums/global_enums.dart';
 import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
-import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
 
 class VerifyemailPage extends StatefulWidget {
   final UserType userType; // Add this parameter
@@ -95,7 +95,7 @@ class _VerifyemailPageState extends State<VerifyemailPage> {
       if (widget.userType == UserType.customer) {
         constants.globalFunctions.nextScreenReplace(
           context,
-          const CustomerHomePage(),
+          const CustomerBottomNavigationBar(),
         );
       } else if (widget.userType == UserType.seller) {
               constants.globalFunctions.showToast(

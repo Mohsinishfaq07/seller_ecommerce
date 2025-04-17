@@ -1,17 +1,16 @@
   import 'package:cloud_firestore/cloud_firestore.dart';
-  import 'package:firebase_auth/firebase_auth.dart';
-  import 'package:flutter/material.dart';
-  import 'package:flutter_application_1/constants/constants.dart';
-  import 'package:flutter_application_1/enums/global_enums.dart';
-  import 'package:flutter_application_1/models/customer_model.dart';
-  import 'package:flutter_application_1/models/seller_model.dart';
-  import 'package:flutter_application_1/models/user_model.dart';
-  import 'package:flutter_application_1/seller_home.dart';
-  import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
-  import 'package:flutter_application_1/view/auth/login_page.dart';
-  import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
-  import 'package:flutter_application_1/view/seller/Seller%20BottomNavbar/Seller_bottom_Nav.dart';
-  import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/enums/global_enums.dart';
+import 'package:flutter_application_1/models/customer_model.dart';
+import 'package:flutter_application_1/models/seller_model.dart';
+import 'package:flutter_application_1/models/user_model.dart';
+import 'package:flutter_application_1/view/admin/admin_home/admin_home.dart';
+import 'package:flutter_application_1/view/auth/login_page.dart';
+import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
+import 'package:flutter_application_1/view/seller/Seller%20BottomNavbar/Seller_bottom_Nav.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
   class AuthServices {
     Future<void> createAccount({
@@ -20,6 +19,7 @@
       required String confirmPassword,
       required String name,
       required String number,
+      required String address,
       required BuildContext context,
       required UserType userType,
       required WidgetRef ref,
@@ -79,6 +79,7 @@
             if (userType == UserType.seller) {
               dataStored = await firestoreService.storeUserData(
                 user: SellerModel(
+                  address: address,
                   userId: user.uid,
                   name: name,
                   email: email,
@@ -93,6 +94,7 @@
             } else {
               dataStored = await firestoreService.storeUserData(
                 user: CustomerModel(
+                  address: address,
                   userId: user.uid,
                   name: name,
                   email: email,
@@ -109,17 +111,6 @@
                     'Account created successfully. Please verify your email address.',
                 toastType: ToastType.success,
               );
-
-              // Navigate based on user type
-              // if (userType == UserType.seller) {
-                // globalFunctions.showToast(
-                //     message: 'Seller account created successfully',
-                //     toastType: ToastType.success);
-              //   globalFunctions.showToast(
-              //       message: 'Account is under approval',
-              //       toastType: ToastType.info);
-                // authServices.signOut(context: context);
-              // } 
               
               if (userType == UserType.customer) {
                 Navigator.pushReplacement(
@@ -135,8 +126,6 @@
             throw Exception(
                 'User creation failed'); // Handle case where user is null
           }
-        } on FirebaseAuthException catch (e) {
-          // ... (FirebaseAuthException handling - this part is also good!)
         } catch (e) {
           // ... (General exception handling - this part is also good!)
         }
@@ -176,8 +165,14 @@
             (e) => e.toString() == userData['userType'],
             orElse: () => UserType.customer,
           );
-
-          // Navigate based on user type
+// if(!userCredential.user!.emailVerified){
+//         globalFunctions.showToast(
+//               message: 'Email is not Verified \n Please Verify Your Email',
+//               toastType: ToastType.error,
+//             );
+//             return;
+// }
+//           // Navigate based on user type
           if (userType == UserType.seller && userData['approved']) {
             globalFunctions.showToast(
               message: 'Login successful',

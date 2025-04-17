@@ -18,6 +18,7 @@ class AuthProvider extends ChangeNotifier {
   final numberController = TextEditingController();
   final shopNameController = TextEditingController();
   final shopTypeController = TextEditingController();
+  final addresscontroller = TextEditingController();
 
   // State variables
   bool _isLoading = false;

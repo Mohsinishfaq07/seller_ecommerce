@@ -5,11 +5,24 @@ import 'package:flutter_application_1/view/auth/forgot_password_screen.dart';
 import 'package:flutter_application_1/view/auth/signup_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomerLoginScreen extends StatelessWidget {
+class CustomerLoginScreen extends StatefulWidget {
+
   const CustomerLoginScreen({Key? key}) : super(key: key);
 
   @override
+  State<CustomerLoginScreen> createState() => _CustomerLoginScreenState();
+}
+
+class _CustomerLoginScreenState extends State<CustomerLoginScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+  @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -250,6 +263,7 @@ class CustomerLoginScreen extends StatelessWidget {
   }
 
   void _handleLogin(BuildContext context, WidgetRef ref, dynamic auth) async {
+    
     final emailController = auth.emailController;
     final passwordController = auth.passwordController;
     constants.globalFunctions

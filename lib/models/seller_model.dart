@@ -8,9 +8,10 @@ class SellerModel {
   final String number;
   final String shopName;
   final String shopType;
+  final String address; // ✅ New address field
   final UserType userType;
   final bool approved;
-  final bool? isEmailVerified; // Made optional by adding '?'
+  final bool? isEmailVerified;
 
   SellerModel({
     required this.userId,
@@ -20,8 +21,9 @@ class SellerModel {
     required this.number,
     required this.shopName,
     required this.shopType,
+    required this.address, // ✅ Constructor param
     required this.approved,
-    this.isEmailVerified, // Now optional in the constructor
+    this.isEmailVerified,
   }) : userType = UserType.seller;
 
   Map<String, dynamic> toMap() {
@@ -34,7 +36,8 @@ class SellerModel {
       'userType': userType.toString(),
       'shopName': shopName,
       'shopType': shopType,
-      'approved': false,
+      'address': address, // ✅ Added here
+      'approved': approved,
     };
     if (isEmailVerified != null) {
       map['isEmailVerified'] = isEmailVerified;
@@ -51,8 +54,9 @@ class SellerModel {
       number: map['number'] ?? '',
       shopName: map['shopName'] ?? '',
       shopType: map['shopType'] ?? '',
+      address: map['address'] ?? '', // ✅ Read from map
       approved: map['approved'] ?? false,
-      isEmailVerified: map['isEmailVerified'], // Can be null
+      isEmailVerified: map['isEmailVerified'],
     );
   }
 
@@ -63,7 +67,8 @@ class SellerModel {
         name.length >= 3 &&
         number.length >= 11 &&
         shopName.isNotEmpty &&
-        shopType.isNotEmpty;
+        shopType.isNotEmpty &&
+        address.isNotEmpty;
   }
 
   String getShopDisplayName() {

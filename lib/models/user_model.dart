@@ -7,6 +7,7 @@ class UserDetail {
   final String userId;
   final UserType userType;
   final String number;
+  final String address; // ✅ New field
 
   UserDetail({
     required this.name,
@@ -15,6 +16,7 @@ class UserDetail {
     required this.userId,
     required this.userType,
     required this.number,
+    required this.address, // ✅ New parameter
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class UserDetail {
       'userId': userId,
       'userType': userType.toString(),
       'number': number,
+      'address': address, // ✅ Added to map
     };
   }
 
@@ -39,14 +42,19 @@ class UserDetail {
         orElse: () => UserType.customer,
       ),
       number: map['number'],
+      address: map['address'] ?? '', // ✅ With fallback
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'email': email,
       'password': password,
       'userId': userId,
+      'userType': userType.toString(), // ✅ Added for consistency
+      'number': number,
+      'address': address, // ✅ New field
     };
   }
 
@@ -61,6 +69,7 @@ class UserDetail {
         orElse: () => UserType.customer,
       ),
       number: json['number'],
+      address: json['address'] ?? '', // ✅ With fallback
     );
   }
 }

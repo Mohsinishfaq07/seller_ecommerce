@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/customer_model.dart';
 import 'package:flutter_application_1/constants/constants.dart';
+import 'package:flutter_application_1/models/customer_model.dart';
 import 'package:flutter_application_1/view/customer/customer_bottom_navigationbar/customer_bottom_navigationbar.dart';
-import 'package:flutter_application_1/view/customer/home_page/customer_home.dart';
 
 import '../enums/global_enums.dart';
 
@@ -13,6 +12,7 @@ class CustomerServices {
     required String password,
     required String name,
     required String number,
+    required String address,
     required String confirmPassword,
     required BuildContext context,
   }) async {
@@ -25,6 +25,7 @@ class CustomerServices {
       );
 
       final customer = CustomerModel(
+        address: address,
         userId: credential.user!.uid,
         name: name,
         email: email,
@@ -48,7 +49,7 @@ class CustomerServices {
         // Navigate to customer home
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) =>  CustomerBottomNavigationBar()),
+          MaterialPageRoute(builder: (context) =>  const CustomerBottomNavigationBar()),
         );
       }
     } catch (e) {

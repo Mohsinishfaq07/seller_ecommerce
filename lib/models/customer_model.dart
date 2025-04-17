@@ -6,8 +6,9 @@ class CustomerModel {
   final String email;
   final String password;
   final String number;
+  final String address; // ✅ New field
   final UserType userType;
-  final bool? isEmailVerified; // Made optional by adding '?'
+  final bool? isEmailVerified;
 
   CustomerModel({
     required this.userId,
@@ -15,16 +16,18 @@ class CustomerModel {
     required this.email,
     required this.password,
     required this.number,
-    this.isEmailVerified, // Now optional in the constructor
+    required this.address, // ✅ Added to constructor
+    this.isEmailVerified,
   }) : userType = UserType.customer;
 
-  // Add the copyWith method
+  // ✅ Updated copyWith method
   CustomerModel copyWith({
     String? userId,
     String? name,
     String? email,
     String? password,
     String? number,
+    String? address,
     bool? isEmailVerified,
   }) {
     return CustomerModel(
@@ -33,6 +36,7 @@ class CustomerModel {
       email: email ?? this.email,
       password: password ?? this.password,
       number: number ?? this.number,
+      address: address ?? this.address,
       isEmailVerified: isEmailVerified ?? this.isEmailVerified,
     );
   }
@@ -44,6 +48,7 @@ class CustomerModel {
       'email': email,
       'password': password,
       'number': number,
+      'address': address, // ✅ Included
       'userType': userType.toString(),
     };
     if (isEmailVerified != null) {
@@ -59,7 +64,8 @@ class CustomerModel {
       email: map['email'] ?? '',
       password: map['password'] ?? '',
       number: map['number'] ?? '',
-      isEmailVerified: map['isEmailVerified'], // Can be null
+      address: map['address'] ?? '', // ✅ With fallback
+      isEmailVerified: map['isEmailVerified'],
     );
   }
 
@@ -68,7 +74,8 @@ class CustomerModel {
     return email.isNotEmpty &&
         password.length >= 6 &&
         name.length >= 3 &&
-        number.length >= 11;
+        number.length >= 11 &&
+        address.isNotEmpty;
   }
 
   String getCustomerDisplayName() {

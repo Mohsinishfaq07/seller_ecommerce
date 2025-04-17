@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/providers/UserprofileProvider.dart';
+import 'package:flutter_application_1/widgets/AddressField.dart';
+import 'package:flutter_application_1/widgets/custom_text_field.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserProfilePage extends ConsumerStatefulWidget {
@@ -13,6 +15,7 @@ class UserProfilePage extends ConsumerStatefulWidget {
 class _CustomerProfilePageState extends ConsumerState<UserProfilePage> {
   final _nameController = TextEditingController();
   final _numberController = TextEditingController();
+  final addresscontroller = TextEditingController();
   bool _isEditing = false;
   String? _email;
 
@@ -25,11 +28,13 @@ class _CustomerProfilePageState extends ConsumerState<UserProfilePage> {
   //method to load initial data
   void _loadInitialData() async {
     final customerData = await ref.read(currentCustomerProvider.future);
+    print(customerData!.name);
     if (mounted) {
-      //check if the widget is mounted before setting state
+      
       setState(() {
-        _nameController.text = customerData?.name ?? '';
-        _numberController.text = customerData?.number ?? '';
+        _nameController.text = customerData.name ?? '';
+        _numberController.text = customerData.number ?? '';
+        addresscontroller.text = customerData.address ?? '';
         _email = ref.read(firebaseAuthProvider).currentUser?.email ?? 'N/A';
       });
     }
@@ -164,58 +169,13 @@ class _CustomerProfilePageState extends ConsumerState<UserProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameController,
-                    enabled: _isEditing,
-                    decoration: InputDecoration(
-                      labelText: 'Username',
-                      labelStyle: const TextStyle(color: Colors.teal),
-                      prefixIcon:
-                          const Icon(Icons.account_circle, color: Colors.teal),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.teal.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.teal.shade300),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                    ),
-                  ),
+                CustomTextField(controller: _nameController, label: "Name",isEnabled: _isEditing,),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: TextEditingController(text: _email ?? 'N/A'),
-                    enabled: false,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.grey),
-                      prefixIcon: Icon(Icons.email, color: Colors.grey),
-                      border: OutlineInputBorder(),
-                      disabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                    ),
-                  ),
+                    CustomTextField(controller: TextEditingController(), label: "Email",isEnabled: false,),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _numberController,
-                    enabled: _isEditing,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      labelStyle: const TextStyle(color: Colors.teal),
-                      prefixIcon: const Icon(Icons.phone, color: Colors.teal),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.teal.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.teal.shade300),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.teal),
-                      ),
-                    ),
-                  ),
+                    CustomTextField(controller: _numberController, label: "Mobile Number",isEnabled: _isEditing,),
+                    const SizedBox(height: 40,),
+                    CustomAddressField(controller: addresscontroller, label: "Address", prefixIcon: Icons.abc,enabled: _isEditing,)
                 ],
               ),
             );
